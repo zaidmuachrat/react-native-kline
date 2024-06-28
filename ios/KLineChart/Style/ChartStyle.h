@@ -14,9 +14,9 @@
 #define ChartColors_bgColor   Color(0xFF18181A)
 #define ChartColors_kLineColor   Color(0xFF18181A)
 #define ChartColors_gridColor   Color(0xFFD3D3D3) //changed by Zaid
-#define ChartColors_ma5Color   Color(0xffC9B885)
-#define ChartColors_ma10Color   Color(0xff6CB0A6)
-#define ChartColors_ma30Color   Color(0xff9979C6)
+#define ChartColors_ma5Color   Color(0xFF0085F4)
+#define ChartColors_ma10Color   Color(0xFFFF8B01)
+#define ChartColors_ma30Color   Color(0xFFC650FF)
 #define ChartColors_upColor   Color(0xff4DAA90)
 #define ChartColors_dnColor   Color(0xffC15466)
 #define ChartColors_volColor   Color(0xff4729AE)

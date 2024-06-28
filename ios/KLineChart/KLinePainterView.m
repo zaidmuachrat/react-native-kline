@@ -415,29 +415,38 @@
 }
 -(void)drawLongPressCrossLine:(CGContextRef)context {
     NSUInteger index = [self calculateIndexWithSelectX:self.longPressX];
-    if([self outRangeIndex:index]) { return; }
+    if ([self outRangeIndex:index]) { return; }
     KLineModel *point = self.datas[index];
     CGFloat itemWidth = _candleWidth + ChartStyle_canldeMargin;
     CGFloat curX = self.frame.size.width - ((index - self.startIndex) * itemWidth + self.startX + self.candleWidth / 2);
-    CGContextSetStrokeColorWithColor(context, ChartColors_crossHlineColor.CGColor);
-    CGContextSetLineWidth(context, _candleWidth);
+    
+    // Set color for vertical line to gray and reduce its width
+    CGContextSetStrokeColorWithColor(context, [UIColor grayColor].CGColor);
+    CGContextSetLineWidth(context, 0.5); // Reduced width
     CGContextMoveToPoint(context, curX, 0);
     CGContextAddLineToPoint(context, curX, self.frame.size.height);
     CGContextDrawPath(context, kCGPathStroke);
     
     CGFloat y = [self.mainRenderer getY:point.close];
     
-    CGContextSetStrokeColorWithColor(context, [UIColor whiteColor].CGColor);
+    // Set color for horizontal line to gray
+    CGContextSetStrokeColorWithColor(context, [UIColor grayColor].CGColor);
     CGContextSetLineWidth(context, 0.5);
     CGContextMoveToPoint(context, 0, y);
     CGContextAddLineToPoint(context, self.frame.size.width, y);
     CGContextDrawPath(context, kCGPathStroke);
     
-    CGContextSetFillColorWithColor(context, [UIColor whiteColor].CGColor);
-    CGContextAddArc(context, curX, y, 2, 0, M_PI_2, true);
+    // Set color for dot at intersection to gray
+    CGContextSetFillColorWithColor(context, [UIColor grayColor].CGColor);
+    CGContextAddArc(context, curX, y, 2, 0, 2 * M_PI, true);
     CGContextDrawPath(context, kCGPathFill);
+    
+    // Draw text for the cross line
     [self drawLongPressCrossLineText:context curPoint:point curX:curX y:y];
 }
+
+
+
 
 
 -(void)drawLongPressCrossLineText:(CGContextRef)context curPoint:(KLineModel *)curPoint curX:(CGFloat)curX y:(CGFloat)y {
