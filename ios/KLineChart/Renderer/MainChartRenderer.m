@@ -64,8 +64,9 @@
     if (lastPoint != nil) {
         if(_isLine) {
             [self drawKLine:context lastValue:lastPoint.close curValue:curPoint.close curX:curX];
+            if (_state == MainStateMA){
             [self drawMaLine:context lastPoit:lastPoint curPoint:curPoint curX:curX];
-
+            }
         } else if (_state == MainStateMA) {
             [self drawMaLine:context lastPoit:lastPoint curPoint:curPoint curX:curX];
         } else if (_state == MainStateBOLL) {
@@ -165,6 +166,7 @@
 - (void)drawTopText:(CGContextRef)context curPoint:(KLineModel *)curPoint {
     NSNumber *fixed = [KLineStateManager manager].pricePrecision;
     NSMutableAttributedString *topAttributeText = [[NSMutableAttributedString alloc] init];
+    if(_state==MainStateMA){
     if(curPoint.MA5Price != 0) {
         NSString *fixedStr = [NSString stringWithFormat:@"%@%@f", @"MA5:%.", fixed];
         NSString *str = [NSString stringWithFormat:fixedStr,curPoint.MA5Price];
@@ -182,7 +184,7 @@
         NSString *str = [NSString stringWithFormat:fixedStr,curPoint.MA30Price];
         NSAttributedString *attr = [[NSAttributedString alloc] initWithString:[str stringByAppendingString:@"    "] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:ChartStyle_defaultTextSize],NSForegroundColorAttributeName: ChartColors_ma30Color}];
         [topAttributeText appendAttributedString:attr];
-    }
+    }}
     [topAttributeText drawAtPoint:CGPointMake(5, 6)];
 }
 
