@@ -46,42 +46,29 @@
     CGContextDrawPath(context, kCGPathStroke);
 }
 
-
 - (void)drawChart:(CGContextRef)context lastPoit:(KLineModel *)lastPoint curPoint:(KLineModel *)curPoint curX:(CGFloat)curX {
-    if(_state == SecondaryStateMacd) {
+    if (self.state == SecondaryStateMacd) {
         [self drawMACD:context lastPoit:lastPoint curPoint:curPoint curX:curX];
-    } else if (_state == SecondaryStateKDJ) {
-        if(lastPoint != nil) {
-            if(curPoint.k != 0) {
+    } else if (self.state == SecondaryStateKDJ) {
+        if (lastPoint != nil) {
+            if (curPoint.k != 0) {
                 [self drawLine:context lastValue:lastPoint.k curValue:curPoint.k curX:curX color:ChartColors_kColor];
             }
-            if(curPoint.d != 0) {
+            if (curPoint.d != 0) {
                 [self drawLine:context lastValue:lastPoint.d curValue:curPoint.d curX:curX color:ChartColors_dColor];
             }
-            if(curPoint.j != 0) {
+            if (curPoint.j != 0) {
                 [self drawLine:context lastValue:lastPoint.j curValue:curPoint.j curX:curX color:ChartColors_jColor];
             }
         }
-    } else if (_state == SecondaryStateRSI) {
-        if(lastPoint != nil) {
-            if(curPoint.rsi != 0) {
-                [self drawLine:context lastValue:lastPoint.rsi curValue:curPoint.rsi curX:curX color:ChartColors_rsiColor];
-            }
-        }
-    } else if (_state == SecondaryStateWR) {
-           if(lastPoint != nil) {
-               if(curPoint.r != 0) {
-                   [self drawLine:context lastValue:lastPoint.r curValue:curPoint.r curX:curX color:ChartColors_rsiColor];
-               }
-           }
     }
 }
 
 - (void)drawMACD:(CGContextRef)context lastPoit:(KLineModel *)lastPoint curPoint:(KLineModel *)curPoint curX:(CGFloat)curX {
     CGFloat maxdY = [self getY:curPoint.macd];
     CGFloat zeroy = [self getY:0];
-    if(curPoint.macd > 0) {
-         CGContextSetStrokeColorWithColor(context, ChartColors_upColor.CGColor);
+    if (curPoint.macd > 0) {
+        CGContextSetStrokeColorWithColor(context, ChartColors_upColor.CGColor);
     } else {
         CGContextSetStrokeColorWithColor(context, ChartColors_dnColor.CGColor);
     }
@@ -89,15 +76,16 @@
     CGContextMoveToPoint(context, curX, maxdY);
     CGContextAddLineToPoint(context, curX, zeroy);
     CGContextDrawPath(context, kCGPathStroke);
-    if(lastPoint != nil) {
-        if(curPoint.dif != 0) {
-             [self drawLine:context lastValue:lastPoint.dif curValue:curPoint.dif curX:curX color:ChartColors_difColor];
+    if (lastPoint != nil) {
+        if (curPoint.dif != 0) {
+            [self drawLine:context lastValue:lastPoint.dif curValue:curPoint.dif curX:curX color:ChartColors_difColor];
         }
-        if(curPoint.dea != 0) {
-             [self drawLine:context lastValue:lastPoint.dea curValue:curPoint.dea curX:curX color:ChartColors_deaColor];
+        if (curPoint.dea != 0) {
+            [self drawLine:context lastValue:lastPoint.dea curValue:curPoint.dea curX:curX color:ChartColors_deaColor];
         }
     }
 }
+
 - (void)drawRightText:(CGContextRef)context gridRows:(NSUInteger)gridRows gridColums:(NSUInteger)gridColums {
     NSString *text = [self volFormat:self.maxValue];
     CGRect rect = [text getRectWithFontSize:ChartStyle_reightTextSize];
