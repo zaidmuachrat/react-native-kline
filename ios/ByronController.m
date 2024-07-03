@@ -16,6 +16,8 @@
     if (self) {
         _selectedDuration = @"1D"; // default value
         _showKDJ = NO; // default value
+        _showMACD = NO; // default value
+        _showRSI = NO; // default value
         [self initChartView]; // Initialize chart view here
     }
     return self;
@@ -25,6 +27,8 @@
     // Initialize KLineChartView with selectedDuration and showKDJ
     _chartView = [[KLineChartView alloc] initWithFrame:self.bounds selectedDuration:_selectedDuration];
     _chartView.showKDJ = _showKDJ;
+    _chartView.showMACD = _showMACD;
+    _chartView.showRSI = _showRSI;
     
     // Set the delegate
     _chartView.delegate = self;
@@ -54,7 +58,14 @@
     _showKDJ = showKDJ;
     _chartView.showKDJ = showKDJ;
 }
-
+- (void)setShowMACD:(BOOL)showMACD {
+    _showMACD = showMACD;
+    _chartView.showMACD = showMACD;
+}
+- (void)setShowRSI:(BOOL)showRSI {
+    _showRSI = showRSI;
+    _chartView.showRSI = showRSI;
+}
 - (void)addHeaderData:(NSArray *)list {
     if (_chartView == nil) {
         return;

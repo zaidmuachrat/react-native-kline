@@ -99,6 +99,14 @@
     _showKDJ = showKDJ;
     self.painterView.showKDJ = showKDJ;
 }
+- (void)setShowMACD:(BOOL)showMACD {
+    _showMACD = showMACD;
+    self.painterView.showMACD = showMACD;
+}
+- (void)setShowRSI:(BOOL)showRSI {
+    _showRSI = showRSI;
+    self.painterView.showRSI = showRSI;
+}
 - (instancetype)initWithFrame:(CGRect)frame selectedDuration:(NSString *)selectedDuration {
     self = [super initWithFrame:frame];
     

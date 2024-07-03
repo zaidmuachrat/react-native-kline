@@ -121,6 +121,8 @@
 @property (nonatomic, strong) NSNumber *volLegendMarginTop;
 @property (nonatomic, copy) NSString *selectedDuration;//added by zaid
 @property (nonatomic, assign) BOOL showKDJ;
+@property (nonatomic, assign) BOOL showMACD;
+@property (nonatomic, assign) BOOL showRSI;
 @property (nonatomic, assign) BOOL requestStatus;
 
 @property(nonatomic,strong) KLineChartView *chartView;
