@@ -39,7 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property(nonatomic,copy) void(^showInfoBlock)(KLineModel *model, BOOL isLeft);
 @property (nonatomic, copy) NSString *selectedDuration;//added by zaid
-
+@property(nonatomic,assign) BOOL showKDJ;
 - (instancetype)initWithFrame:(CGRect)frame
                         datas:(NSArray<KLineModel *> *)datas
                       scrollX:(CGFloat)scrollX

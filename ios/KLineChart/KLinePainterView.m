@@ -20,7 +20,6 @@
 @property(nonatomic,strong) SecondaryChartRenderer *seconderyRender;
 @property(nonatomic,strong) SecondaryChartRenderer *tertiaryRenderer; // MACD Renderer
 @property(nonatomic,strong) SecondaryChartRenderer *quaternaryRenderer; // RSI Renderer
-
 @property(nonatomic,assign) CGRect mainRect;
 @property(nonatomic,assign) CGRect volRect;
 @property(nonatomic,assign) CGRect secondaryRect;
@@ -75,7 +74,10 @@
     _isLine = isLine;
     [self setNeedsDisplay];
 }
-
+- (void)setShowKDJ:(BOOL)showKDJ {
+    _showKDJ = showKDJ;
+    [self setNeedsDisplay];
+}
 -(void)setScaleX:(CGFloat)scaleX {
     _scaleX = scaleX;
     self.candleWidth = scaleX * ChartStyle_candleWidth;
@@ -175,10 +177,9 @@
         [self drawRealTimePrice:context];
     }
 }
-
 -(void)divisionRect {
-    CGFloat mainHeight = self.displayHeight * 0.4; // Reduced main chart height to allocate more space for indicators
-    CGFloat volHeight = self.displayHeight * 0.1;
+    CGFloat mainHeight = self.displayHeight * 0.3;
+    CGFloat volHeight = self.displayHeight * 0.15;
     CGFloat secondaryHeight = self.displayHeight * 0.2; // Height for KDJ
     CGFloat tertiaryHeight = self.displayHeight * 0.2; // Height for MACD
     CGFloat quaternaryHeight = self.displayHeight * 0.2; // Height for RSI
@@ -191,12 +192,45 @@
         self.volRect = CGRectZero;
     }
 
-    self.secondaryRect = CGRectMake(0, CGRectGetMaxY(self.volRect), self.frame.size.width, secondaryHeight);
-    self.tertiaryRect = CGRectMake(0, CGRectGetMaxY(self.secondaryRect), self.frame.size.width, tertiaryHeight);
-    self.quaternaryRect = CGRectMake(0, CGRectGetMaxY(self.tertiaryRect), self.frame.size.width, quaternaryHeight);
+    CGFloat currentY = CGRectGetMaxY(self.volRect);
 
-    self.dateRect = CGRectMake(0, CGRectGetMaxY(self.quaternaryRect), self.frame.size.width, ChartStyle_bottomDateHigh);
+    if (_showKDJ) {
+        self.secondaryRect = CGRectMake(0, currentY, self.frame.size.width, secondaryHeight);
+        currentY = CGRectGetMaxY(self.secondaryRect);
+    } else {
+        self.secondaryRect = CGRectZero;
+    }
+
+    self.tertiaryRect = CGRectMake(0, currentY, self.frame.size.width, tertiaryHeight);
+    currentY = CGRectGetMaxY(self.tertiaryRect);
+
+    self.quaternaryRect = CGRectMake(0, currentY, self.frame.size.width, quaternaryHeight);
+    currentY = CGRectGetMaxY(self.quaternaryRect);
+
+    self.dateRect = CGRectMake(0, currentY, self.frame.size.width, ChartStyle_bottomDateHigh);
 }
+
+// -(void)divisionRect {
+//     CGFloat mainHeight = self.displayHeight * 0.3; // Reduced main chart height to allocate more space for indicators
+//     CGFloat volHeight = self.displayHeight * 0.15;
+//     CGFloat secondaryHeight = self.displayHeight * 0.2; // Height for KDJ
+//     CGFloat tertiaryHeight = self.displayHeight * 0.2; // Height for MACD
+//     CGFloat quaternaryHeight = self.displayHeight * 0.2; // Height for RSI
+
+//     self.mainRect = CGRectMake(0, ChartStyle_topPadding, self.frame.size.width, mainHeight);
+
+//     if (_volState != VolStateNONE) {
+//         self.volRect = CGRectMake(0, CGRectGetMaxY(_mainRect), self.frame.size.width, volHeight);
+//     } else {
+//         self.volRect = CGRectZero;
+//     }
+
+//     self.secondaryRect = CGRectMake(0, CGRectGetMaxY(self.volRect), self.frame.size.width, secondaryHeight);
+//     self.tertiaryRect = CGRectMake(0, CGRectGetMaxY(self.secondaryRect), self.frame.size.width, tertiaryHeight);
+//     self.quaternaryRect = CGRectMake(0, CGRectGetMaxY(self.tertiaryRect), self.frame.size.width, quaternaryHeight);
+
+//     self.dateRect = CGRectMake(0, CGRectGetMaxY(self.quaternaryRect), self.frame.size.width, ChartStyle_bottomDateHigh);
+// }
 
 -(void)calculateValue {
     if(self.datas.count == 0) { return; }
@@ -358,6 +392,30 @@
     CGContextDrawPath(context, kCGPathStroke);
 }
 
+// -(void)drawChart:(CGContextRef)context {
+//     for (NSUInteger index = _startIndex; index <= _stopIndex; index++) {
+//         KLineModel *curPoint = self.datas[index];
+//         CGFloat itemWidth = _candleWidth + ChartStyle_canldeMargin;
+//         CGFloat curX = (CGFloat)(index - _startIndex) * itemWidth + _startX;
+//         CGFloat _curX = self.frame.size.width - curX - _candleWidth / 2;
+//         KLineModel *lastPoint;
+//         if (index != _startIndex) {
+//             lastPoint = self.datas[index - 1];
+//         }
+        
+//         [_mainRenderer drawChart:context lastPoit:lastPoint curPoint:curPoint curX:_curX];
+        
+//         if (_volRenderer != nil) {
+//             [_volRenderer drawChart:context lastPoit:lastPoint curPoint:curPoint curX:_curX];
+//         }
+        
+//         [_seconderyRender drawChart:context lastPoit:lastPoint curPoint:curPoint curX:_curX]; // Draw KDJ
+        
+//         [_tertiaryRenderer drawChart:context lastPoit:lastPoint curPoint:curPoint curX:_curX]; // Draw MACD
+        
+//         [_quaternaryRenderer drawChart:context lastPoit:lastPoint curPoint:curPoint curX:_curX]; // Draw RSI
+//     }
+// }
 -(void)drawChart:(CGContextRef)context {
     for (NSUInteger index = _startIndex; index <= _stopIndex; index++) {
         KLineModel *curPoint = self.datas[index];
@@ -368,20 +426,22 @@
         if (index != _startIndex) {
             lastPoint = self.datas[index - 1];
         }
-        
+
         [_mainRenderer drawChart:context lastPoit:lastPoint curPoint:curPoint curX:_curX];
-        
+
         if (_volRenderer != nil) {
             [_volRenderer drawChart:context lastPoit:lastPoint curPoint:curPoint curX:_curX];
         }
-        
-        [_seconderyRender drawChart:context lastPoit:lastPoint curPoint:curPoint curX:_curX]; // Draw KDJ
-        
-        [_tertiaryRenderer drawChart:context lastPoit:lastPoint curPoint:curPoint curX:_curX]; // Draw MACD
-        
-        [_quaternaryRenderer drawChart:context lastPoit:lastPoint curPoint:curPoint curX:_curX]; // Draw RSI
+
+        if (_showKDJ) {
+            [_seconderyRender drawChart:context lastPoit:lastPoint curPoint:curPoint curX:_curX];
+        }
+
+        [_tertiaryRenderer drawChart:context lastPoit:lastPoint curPoint:curPoint curX:_curX];
+        [_quaternaryRenderer drawChart:context lastPoit:lastPoint curPoint:curPoint curX:_curX];
     }
 }
+
 
 -(void)drawDate:(CGContextRef)context {
     CGFloat cloumSpace = self.frame.size.width / (CGFloat)ChartStyle_gridColumns;
@@ -586,18 +646,17 @@
 
 -(void)drawTopText:(CGContextRef)context curPoint:(KLineModel *)curPoint {
     [_mainRenderer drawTopText:context curPoint:curPoint];
+
     if (_volRenderer != nil) {
         [_volRenderer drawTopText:context curPoint:curPoint];
     }
-    if (_seconderyRender != nil) {
+
+    if (_showKDJ) {
         [_seconderyRender drawTopText:context curPoint:curPoint];
     }
-    if (_tertiaryRenderer != nil) {
-        [_tertiaryRenderer drawTopText:context curPoint:curPoint];
-    }
-    if (_quaternaryRenderer != nil) {
-        [_quaternaryRenderer drawTopText:context curPoint:curPoint];
-    }
+
+    [_tertiaryRenderer drawTopText:context curPoint:curPoint];
+    [_quaternaryRenderer drawTopText:context curPoint:curPoint];
 }
 
 -(void)drawRightText:(CGContextRef)context {

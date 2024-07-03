@@ -95,7 +95,10 @@
 - (void)setMainBackgroundColor:(NSString *)mainBackgroundColor {
     self.painterView.mainBackgroundColor = mainBackgroundColor;
 }
-
+- (void)setShowKDJ:(BOOL)showKDJ {
+    _showKDJ = showKDJ;
+    self.painterView.showKDJ = showKDJ;
+}
 - (instancetype)initWithFrame:(CGRect)frame selectedDuration:(NSString *)selectedDuration {
     self = [super initWithFrame:frame];
     

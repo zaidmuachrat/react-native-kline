@@ -47,22 +47,35 @@
 }
 
 - (void)drawChart:(CGContextRef)context lastPoit:(KLineModel *)lastPoint curPoint:(KLineModel *)curPoint curX:(CGFloat)curX {
-    if (self.state == SecondaryStateMacd) {
+    if(_state == SecondaryStateMacd) {
         [self drawMACD:context lastPoit:lastPoint curPoint:curPoint curX:curX];
-    } else if (self.state == SecondaryStateKDJ) {
-        if (lastPoint != nil) {
-            if (curPoint.k != 0) {
+    } else if (_state == SecondaryStateKDJ) {
+        if(lastPoint != nil) {
+            if(curPoint.k != 0) {
                 [self drawLine:context lastValue:lastPoint.k curValue:curPoint.k curX:curX color:ChartColors_kColor];
             }
-            if (curPoint.d != 0) {
+            if(curPoint.d != 0) {
                 [self drawLine:context lastValue:lastPoint.d curValue:curPoint.d curX:curX color:ChartColors_dColor];
             }
-            if (curPoint.j != 0) {
+            if(curPoint.j != 0) {
                 [self drawLine:context lastValue:lastPoint.j curValue:curPoint.j curX:curX color:ChartColors_jColor];
+            }
+        }
+    } else if (_state == SecondaryStateRSI) {
+        if(lastPoint != nil) {
+            if(curPoint.rsi != 0) {
+                [self drawLine:context lastValue:lastPoint.rsi curValue:curPoint.rsi curX:curX color:ChartColors_rsiColor];
+            }
+        }
+    } else if (_state == SecondaryStateWR) {
+        if(lastPoint != nil) {
+            if(curPoint.r != 0) {
+                [self drawLine:context lastValue:lastPoint.r curValue:curPoint.r curX:curX color:ChartColors_wrColor];
             }
         }
     }
 }
+
 
 - (void)drawMACD:(CGContextRef)context lastPoit:(KLineModel *)lastPoint curPoint:(KLineModel *)curPoint curX:(CGFloat)curX {
     CGFloat maxdY = [self getY:curPoint.macd];

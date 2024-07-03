@@ -3,5 +3,6 @@
 
 @interface ByronKline : RCTViewManager
 @property (nonatomic, copy) NSString *selectedDuration; //add by Zaid
+@property (nonatomic, assign) BOOL showKDJ;
 
 @end
