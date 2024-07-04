@@ -114,7 +114,7 @@
         _selectedDuration = selectedDuration; // Set the selected duration
 
         // Check the value of _selectedDuration and set _scaleX accordingly
-        if ([_selectedDuration isEqualToString:@"1M"]) {
+        if ([self.selectedDuration isEqualToString:@"1D" ] || [self.selectedDuration isEqualToString:@"5M"]|| [self.selectedDuration isEqualToString:@"10M"]|| [self.selectedDuration isEqualToString:@"30M"]|| [self.selectedDuration isEqualToString:@"1H"]) {
             _scaleX = 2;
         } else if ([_selectedDuration isEqualToString:@"3M"]) {
             _scaleX = 1.5;

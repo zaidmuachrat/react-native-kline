@@ -153,7 +153,7 @@
     NSTimeInterval fristtime = 0;
     NSTimeInterval secondTime = 0;
     NSTimeInterval time = ABS(fristtime - secondTime);
-    if ([self.selectedDuration isEqualToString:@"1D"]) {
+    if ([self.selectedDuration isEqualToString:@"1D" ] || [self.selectedDuration isEqualToString:@"1Min"]|| [self.selectedDuration isEqualToString:@"5M"]|| [self.selectedDuration isEqualToString:@"10M"]|| [self.selectedDuration isEqualToString:@"30M"]|| [self.selectedDuration isEqualToString:@"1H"]) {
         self.fromat = @"HH:mm";
     } else if ([self.selectedDuration isEqualToString:@"5D"] || [self.selectedDuration isEqualToString:@"1M"] || [self.selectedDuration isEqualToString:@"3M"]) {
         self.fromat = @"MM-dd";
@@ -185,33 +185,29 @@
         [self drawRealTimePrice:context];
     }
 }
+
 -(void)divisionRect {
     CGFloat volHeight = (_volState != VolStateNONE) ? (self.displayHeight * 0.15) : 0;
-    CGFloat secondaryHeight = _showKDJ ? (self.displayHeight * 0.2) : 0;
-    CGFloat tertiaryHeight = _showMACD ? (self.displayHeight * 0.2) : 0;
-    CGFloat quaternaryHeight = _showRSI ? (self.displayHeight * 0.2) : 0;
+    CGFloat secondaryHeight = _showKDJ ? (self.displayHeight * 0.18) : 0;
+    CGFloat tertiaryHeight = _showMACD ? (self.displayHeight * 0.18) : 0;
+    CGFloat quaternaryHeight = _showRSI ? (self.displayHeight * 0.18) : 0;
     CGFloat dateHeight = ChartStyle_bottomDateHigh;
 
     // Calculate the number of indicators shown
     int indicatorsCount = (_showKDJ ? 1 : 0) + (_showMACD ? 1 : 0) + (_showRSI ? 1 : 0);
 
-    // Adjust mainHeight based on the number of indicators shown and the presence of volume
-    CGFloat mainHeightFactor = 0.8;
+    // Adjust mainHeight based on the number of indicators shown
+    CGFloat mainHeight = 0.8;
     if (indicatorsCount == 1) {
-        mainHeightFactor = 0.57;
+        mainHeight = 0.6;
     } else if (indicatorsCount == 2) {
-        mainHeightFactor = 0.4;
+        mainHeight = 0.4;
     } else if (indicatorsCount == 3) {
-        mainHeightFactor = 0.25;
-    }
-
-    // Adjust the main height if volume is not present
-    if (_volState == VolStateNONE) {
-        mainHeightFactor += 0.15;
+        mainHeight = 0.25;
     }
 
     // Calculate the heights for the main chart and the total used height
-    CGFloat mainHeight = self.displayHeight * mainHeightFactor;
+    mainHeight *= self.displayHeight;
     CGFloat usedHeight = volHeight + secondaryHeight + tertiaryHeight + quaternaryHeight + dateHeight;
 
     self.mainRect = CGRectMake(0, ChartStyle_topPadding, self.frame.size.width, mainHeight);
@@ -245,7 +241,7 @@
     } else {
         self.quaternaryRect = CGRectZero;
     }
-
+  
     self.dateRect = CGRectMake(0, currentY, self.frame.size.width, dateHeight);
 }
 
@@ -518,7 +514,6 @@
     // Draw text for the cross line
     [self drawLongPressCrossLineText:context curPoint:point curX:curX y:y];
 }
-
 -(void)drawLongPressCrossLineText:(CGContextRef)context curPoint:(KLineModel *)curPoint curX:(CGFloat)curX y:(CGFloat)y {
     NSNumber *fixedPrice = [KLineStateManager manager].pricePrecision;
     NSString *fixedPriceStr = [NSString stringWithFormat:@"%@%@f", @"%.", fixedPrice];
@@ -558,60 +553,31 @@
         CGContextDrawPath(context, kCGPathFillStroke);
         [self.mainRenderer drawText:text atPoint:CGPointMake(2, y - rect.size.height / 2) fontSize:ChartStyle_defaultTextSize textColor: [UIColor whiteColor]];
     }
-    
-    // Get the formatted date string for the x-axis
-    NSString *dateText = [self calculateDateText:curPoint.id];
-    CGRect dateRect = [dateText getRectWithFontSize:ChartStyle_defaultTextSize];
-    CGFloat datePadding = 3;
 
-    // Draw the date box on the x-axis
-    CGFloat dateBoxX = curX - dateRect.size.width / 2 - datePadding;
-    CGFloat dateBoxY = CGRectGetMaxY(self.dateRect) + datePadding;
-
-    CGContextSetLineWidth(context, 1);
-    CGContextSetFillColorWithColor(context, ChartColors_realTimeBgColor.CGColor);
-    CGContextSetStrokeColorWithColor(context, ChartColors_realTimeTextBorderColor.CGColor);
-
-    CGContextMoveToPoint(context, dateBoxX, dateBoxY);
-
-    CGRect arcRect = CGRectMake(dateBoxX, dateBoxY, dateRect.size.width + datePadding * 2, dateRect.size.height + datePadding * 2);
-    CGFloat minX = CGRectGetMinX(arcRect);
-    CGFloat midX = CGRectGetMidX(arcRect);
-    CGFloat maxX = CGRectGetMaxX(arcRect);
-
-    CGFloat minY = CGRectGetMinY(arcRect);
-    CGFloat midY = CGRectGetMidY(arcRect);
-    CGFloat maxY = CGRectGetMaxY(arcRect);
-
-    CGContextMoveToPoint(context, minX, midY);
-    CGContextAddArcToPoint(context, minX, minY, midX, minY, 5);
-    CGContextAddArcToPoint(context, maxX, minY, maxX, midY, 5);
-    CGContextAddArcToPoint(context, maxX, maxY, midX, maxY, 5);
-    CGContextAddArcToPoint(context, minX, maxY, minX, midY, 5);
-    CGContextClosePath(context);
-    CGContextDrawPath(context, kCGPathFillStroke);
-
-    [self.mainRenderer drawText:dateText atPoint:CGPointMake(dateBoxX + datePadding, dateBoxY + datePadding) fontSize:ChartStyle_defaultTextSize textColor:ChartColors_realTimeTextColor];
-
-    // Get the time text for the black box or date for other durations
+    // Get the time text for the x-axis
     NSDate *date = [NSDate dateWithTimeIntervalSince1970:curPoint.id];
     NSDateFormatter *timeFormatter = [[NSDateFormatter alloc] init];
     
-    if ([@[@"1D", @"5D"] containsObject:self.selectedDuration]) {
+    if ([@[@"1D", @"5D",@"1Min",@"5M",@"10M",@"30M",@"1H"] containsObject:self.selectedDuration]) {
         timeFormatter.dateFormat = @"HH:mm";
     } else if([@[@"1M", @"3M"] containsObject:self.selectedDuration]) {
         timeFormatter.dateFormat = @"MM-dd";
-    }else{
-         timeFormatter.dateFormat = @"yyyy-MM";
+    } else {
+        timeFormatter.dateFormat = @"yyyy-MM";
     }
 
     NSString *timeText = [timeFormatter stringFromDate:date];
-
     CGRect timeRect = [timeText getRectWithFontSize:ChartStyle_defaultTextSize];
+    CGFloat datePadding = 3;
 
-    // Draw the black box with time or date on the x-axis
+    // Draw the black box with time on the x-axis
     CGFloat timeBoxX = curX - timeRect.size.width / 2 - datePadding;
     CGFloat timeBoxY = CGRectGetMinY(self.dateRect) - timeRect.size.height - datePadding * 2;
+
+    // Ensure the time box is above the x-axis
+    if (timeBoxY < 0) {
+        timeBoxY = 0;
+    }
 
     CGContextSetLineWidth(context, 1);
     CGContextSetFillColorWithColor(context, [UIColor blackColor].CGColor);
@@ -620,13 +586,13 @@
     CGContextMoveToPoint(context, timeBoxX, timeBoxY);
 
     CGRect timeArcRect = CGRectMake(timeBoxX, timeBoxY, timeRect.size.width + datePadding * 2, timeRect.size.height + datePadding * 2);
-    minX = CGRectGetMinX(timeArcRect);
-    midX = CGRectGetMidX(timeArcRect);
-    maxX = CGRectGetMaxX(timeArcRect);
+    CGFloat minX = CGRectGetMinX(timeArcRect);
+    CGFloat midX = CGRectGetMidX(timeArcRect);
+    CGFloat maxX = CGRectGetMaxX(timeArcRect);
 
-    minY = CGRectGetMinY(timeArcRect);
-    midY = CGRectGetMidY(timeArcRect);
-    maxY = CGRectGetMaxY(timeArcRect);
+    CGFloat minY = CGRectGetMinY(timeArcRect);
+    CGFloat midY = CGRectGetMidY(timeArcRect);
+    CGFloat maxY = CGRectGetMaxY(timeArcRect);
 
     CGContextMoveToPoint(context, minX, midY);
     CGContextAddArcToPoint(context, minX, minY, midX, minY, 5);
@@ -641,6 +607,8 @@
     self.showInfoBlock(curPoint, isLeft);
     [self drawTopText:context curPoint:curPoint];
 }
+
+
 -(void)drawTopText:(CGContextRef)context curPoint:(KLineModel *)curPoint {
     [_mainRenderer drawTopText:context curPoint:curPoint];
 
