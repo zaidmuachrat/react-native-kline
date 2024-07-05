@@ -1,4 +1,3 @@
-
 #import "ByronController.h"
 #import "DataUtil.h"
 #import "KLineChartView.h"
@@ -6,20 +5,30 @@
 #import "KLineModel.h"
 #import "KLineChart/Style/ChartStyle.h"
 
+@interface ByronController()
+
+@end
+
 @implementation ByronController
 
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        _selectedDuration = @"1D"; // default value  add by Zaid
+        _selectedDuration = @"1D"; // default value
+        _showKDJ = NO; // default value
+        _showMACD = NO; // default value
+        _showRSI = NO; // default value
         [self initChartView]; // Initialize chart view here
     }
     return self;
 }
 
 - (void)initChartView {
-    // Initialize KLineChartView with selectedDuration
+    // Initialize KLineChartView with selectedDuration and showKDJ
     _chartView = [[KLineChartView alloc] initWithFrame:self.bounds selectedDuration:_selectedDuration];
+    _chartView.showKDJ = _showKDJ;
+    _chartView.showMACD = _showMACD;
+    _chartView.showRSI = _showRSI;
     
     // Set the delegate
     _chartView.delegate = self;
@@ -42,9 +51,21 @@
 
 - (void)setSelectedDuration:(NSString *)selectedDuration {
     _selectedDuration = selectedDuration;
-    _chartView.selectedDuration = selectedDuration; 
-}//add by Zaid
+    _chartView.selectedDuration = selectedDuration;
+}
 
+- (void)setShowKDJ:(BOOL)showKDJ {
+    _showKDJ = showKDJ;
+    _chartView.showKDJ = showKDJ;
+}
+- (void)setShowMACD:(BOOL)showMACD {
+    _showMACD = showMACD;
+    _chartView.showMACD = showMACD;
+}
+- (void)setShowRSI:(BOOL)showRSI {
+    _showRSI = showRSI;
+    _chartView.showRSI = showRSI;
+}
 - (void)addHeaderData:(NSArray *)list {
     if (_chartView == nil) {
         return;
@@ -186,7 +207,6 @@
     [KLineStateManager manager].mainState = MainStateNONE;
     [KLineStateManager manager].secondaryState = SecondaryStateNONE;
     [KLineStateManager manager].isLine = NO;
-//    _chartView.volState = VolStateNONE;
 }
 
 - (void)changeKLineState:(NSNumber *)index {
@@ -248,6 +268,5 @@
     _mainBackgroundColor = mainBackgroundColor;
     [_chartView setMainBackgroundColor:_mainBackgroundColor];
 }
-
 
 @end

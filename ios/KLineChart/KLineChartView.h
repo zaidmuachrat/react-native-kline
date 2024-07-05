@@ -27,7 +27,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic,assign) VolState volState;
 @property(nonatomic,assign) SecondaryState secondaryState;
 @property(nonatomic,assign) KLineDirection direction;
-@property (nonatomic, copy) NSString *selectedDuration;//add by Zaid
+@property (nonatomic, copy) NSString *selectedDuration;//added by Zaid
+@property (nonatomic, assign) BOOL showKDJ; // //added by Zaid
+@property (nonatomic, assign) BOOL showMACD; // //added by Zaid
+@property (nonatomic, assign) BOOL showRSI; // //added by Zaid
+
 
 - (void) setMainBackgroundColor:(NSString *)mainBackgroundColor;
 - (instancetype)initWithFrame:(CGRect)frame selectedDuration:(NSString *)selectedDuration;

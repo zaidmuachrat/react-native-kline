@@ -95,7 +95,18 @@
 - (void)setMainBackgroundColor:(NSString *)mainBackgroundColor {
     self.painterView.mainBackgroundColor = mainBackgroundColor;
 }
-
+- (void)setShowKDJ:(BOOL)showKDJ {
+    _showKDJ = showKDJ;
+    self.painterView.showKDJ = showKDJ;
+}
+- (void)setShowMACD:(BOOL)showMACD {
+    _showMACD = showMACD;
+    self.painterView.showMACD = showMACD;
+}
+- (void)setShowRSI:(BOOL)showRSI {
+    _showRSI = showRSI;
+    self.painterView.showRSI = showRSI;
+}
 - (instancetype)initWithFrame:(CGRect)frame selectedDuration:(NSString *)selectedDuration {
     self = [super initWithFrame:frame];
     
@@ -103,7 +114,7 @@
         _selectedDuration = selectedDuration; // Set the selected duration
 
         // Check the value of _selectedDuration and set _scaleX accordingly
-        if ([_selectedDuration isEqualToString:@"1M"]) {
+        if ([self.selectedDuration isEqualToString:@"1M" ] || [self.selectedDuration isEqualToString:@"5M"]|| [self.selectedDuration isEqualToString:@"10M"]|| [self.selectedDuration isEqualToString:@"30M"]|| [self.selectedDuration isEqualToString:@"1H"]) {
             _scaleX = 2;
         } else if ([_selectedDuration isEqualToString:@"3M"]) {
             _scaleX = 1.5;

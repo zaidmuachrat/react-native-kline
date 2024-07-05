@@ -141,6 +141,9 @@ RCT_EXPORT_VIEW_PROPERTY(volMa2Color, NSString);
 RCT_EXPORT_VIEW_PROPERTY(volLegendColor, NSString);
 RCT_EXPORT_VIEW_PROPERTY(volLineChartColor, NSString);
 RCT_EXPORT_VIEW_PROPERTY(volLegendMarginTop, NSNumber);
-RCT_EXPORT_VIEW_PROPERTY(selectedDuration, NSString) //add by Zaid
+RCT_EXPORT_VIEW_PROPERTY(selectedDuration, NSString) //added by Zaid
+RCT_EXPORT_VIEW_PROPERTY(showKDJ, BOOL)//adde by Zaid
+RCT_EXPORT_VIEW_PROPERTY(showMACD, BOOL)//added by Zaid
+RCT_EXPORT_VIEW_PROPERTY(showRSI, BOOL)//added by Zaid
 
 @end

@@ -99,7 +99,7 @@ static CGFloat ChartStyle_gridColumns = 4; //changed by Zaid
 
 static CGFloat ChartStyle_topPadding = 30.0;
    
-static CGFloat ChartStyle_bottomDateHigh = 20.0;
+static CGFloat ChartStyle_bottomDateHigh = 15.0;
    
 static CGFloat ChartStyle_childPadding = 25.0;
 
