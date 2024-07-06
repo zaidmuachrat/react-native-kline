@@ -6,6 +6,7 @@
 #import "KLineChart/Style/ChartStyle.h"
 
 @interface ByronController()
+@property (nonatomic, assign) BOOL isThrottled;
 
 @end
 
@@ -123,9 +124,7 @@
     }
     [DataUtil calculate:newDatas];
     [KLineStateManager manager].datas = [newDatas copy];
-    if (_requestStatus == YES) {
-        _requestStatus = NO;
-    }
+
 }
 
 - (void)setDatas:(NSArray *)datas {
@@ -190,15 +189,35 @@
 
 - (void)onMoreKLineData {
     if (self.onRNMoreKLineData == nil) {
+       
         return;
     }
-    if (_requestStatus == YES) {
+    if (_requestStatus == YES || self.isThrottled) {
+       
         return;
     }
     _requestStatus = YES;
+    self.isThrottled = YES;
+
     KLineModel *model = [KLineStateManager manager].datas.lastObject;
-    self.onRNMoreKLineData(@{@"id":@(model.id)});
+   
+    self.onRNMoreKLineData(@{@"id": @(model.id)});
+
+    // Reset _requestStatus after the data is fetched and merged
+    [self performSelector:@selector(resetRequestStatus) withObject:nil afterDelay:0.1];
+    [self performSelector:@selector(resetThrottle) withObject:nil afterDelay:2.0]; // Adjust the delay as needed
 }
+
+- (void)resetRequestStatus {
+    _requestStatus = NO;
+    
+}
+
+- (void)resetThrottle {
+    self.isThrottled = NO;
+   
+}
+
 
 - (void)initKLineState {
     if (_chartView == nil) {
@@ -207,6 +226,7 @@
     [KLineStateManager manager].mainState = MainStateNONE;
     [KLineStateManager manager].secondaryState = SecondaryStateNONE;
     [KLineStateManager manager].isLine = NO;
+
 }
 
 - (void)changeKLineState:(NSNumber *)index {
