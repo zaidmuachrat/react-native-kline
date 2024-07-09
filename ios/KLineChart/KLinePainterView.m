@@ -197,13 +197,17 @@
     int indicatorsCount = (_showKDJ ? 1 : 0) + (_showMACD ? 1 : 0) + (_showRSI ? 1 : 0);
 
     // Adjust mainHeight based on the number of indicators shown
-    CGFloat mainHeight = 0.8;
+    CGFloat mainHeight = 0.85;
     if (indicatorsCount == 1) {
-        mainHeight = 0.6;
+        mainHeight = 0.68;
     } else if (indicatorsCount == 2) {
-        mainHeight = 0.4;
+        mainHeight = 0.48;
     } else if (indicatorsCount == 3) {
-        mainHeight = 0.25;
+        mainHeight = 0.3;
+    }
+  // Add the volume height to mainHeight if volume is not present
+    if (_volState == VolStateNONE) {
+        mainHeight += 0.15; // Adding 15% height to the mainHeight
     }
 
     // Calculate the heights for the main chart and the total used height
@@ -217,7 +221,8 @@
     if (_volState != VolStateNONE) {
         self.volRect = CGRectMake(0, currentY, self.frame.size.width, volHeight);
         currentY = CGRectGetMaxY(self.volRect);
-    } else {
+    }
+     else {
         self.volRect = CGRectZero;
     }
 
