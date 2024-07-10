@@ -166,6 +166,9 @@
 - (void)drawTopText:(CGContextRef)context curPoint:(KLineModel *)curPoint {
     NSNumber *fixed = [KLineStateManager manager].pricePrecision;
     NSMutableAttributedString *topAttributeText = [[NSMutableAttributedString alloc] init];
+    NSString *staticText = @"MA(5,10,30): ";
+    NSAttributedString *staticAttr = [[NSAttributedString alloc] initWithString:staticText attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:ChartStyle_defaultTextSize], NSForegroundColorAttributeName:  ChartColors_yAxisTextColor}];
+    [topAttributeText appendAttributedString:staticAttr];
     if(_state==MainStateMA){
     if(curPoint.MA5Price != 0) {
         NSString *fixedStr = [NSString stringWithFormat:@"%@%@f", @"MA5:%.", fixed];

@@ -6,5 +6,7 @@
 @property (nonatomic, assign) BOOL showKDJ;
 @property (nonatomic, assign) BOOL showMACD;
 @property (nonatomic, assign) BOOL showRSI;
+@property (nonatomic, assign) BOOL showVMA;
+
 
 @end

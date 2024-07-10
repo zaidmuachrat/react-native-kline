@@ -27,12 +27,14 @@
 }
 - (void)drawChart:(CGContextRef)context lastPoit:(KLineModel *)lastPoint curPoint:(KLineModel *)curPoint curX:(CGFloat)curX {
     [self drawVolChat:context curPoint:curPoint curX:curX];
-    if(lastPoint != nil){
-        if(curPoint.MA5Volume != 0) {
-            [self drawLine:context lastValue:lastPoint.MA5Volume curValue:curPoint.MA5Volume curX:curX color:ChartColors_ma5Color];
-        }
-        if(curPoint.MA10Volume != 0) {
-            [self drawLine:context lastValue:lastPoint.MA10Volume curValue:curPoint.MA10Volume curX:curX color:ChartColors_ma10Color];
+    if (self.showVMA) { // Conditionally draw the VMA lines
+        if (lastPoint != nil) {
+            if (curPoint.MA5Volume != 0) {
+                [self drawLine:context lastValue:lastPoint.MA5Volume curValue:curPoint.MA5Volume curX:curX color:ChartColors_ma5Color];
+            }
+            if (curPoint.MA10Volume != 0) {
+                [self drawLine:context lastValue:lastPoint.MA10Volume curValue:curPoint.MA10Volume curX:curX color:ChartColors_ma10Color];
+            }
         }
     }
 }
@@ -58,12 +60,12 @@
         [topAttributeText appendAttributedString:attr];
     }
     {
-        NSString *str = [NSString stringWithFormat:@"MA5:%@    ", [self volFormat:curPoint.MA5Volume]];
+        NSString *str = [NSString stringWithFormat:@"VMA5:%@    ", [self volFormat:curPoint.MA5Volume]];
         NSAttributedString *attr = [[NSAttributedString alloc] initWithString:str attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:ChartStyle_defaultTextSize],NSForegroundColorAttributeName: ChartColors_ma5Color}];
         [topAttributeText appendAttributedString:attr];
     }
    {
-        NSString *str = [NSString stringWithFormat:@"MA10:%@   ",[self volFormat:curPoint.MA10Volume]];
+        NSString *str = [NSString stringWithFormat:@"VMA10:%@   ",[self volFormat:curPoint.MA10Volume]];
         NSAttributedString *attr = [[NSAttributedString alloc] initWithString:str attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:ChartStyle_defaultTextSize],NSForegroundColorAttributeName: ChartColors_ma10Color}];
         [topAttributeText appendAttributedString:attr];
     }

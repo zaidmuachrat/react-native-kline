@@ -137,10 +137,22 @@
         } break;
         case SecondaryStateRSI:
         {
-            NSString *fixedStr = [NSString stringWithFormat:@"%@%@f", @"RSI(14):%.", fixed];
-            NSString *str = [NSString stringWithFormat:fixedStr, curPoint.rsi];
-            NSAttributedString *attr = [[NSAttributedString alloc] initWithString:[str stringByAppendingString:@"    "] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:ChartStyle_defaultTextSize],NSForegroundColorAttributeName: ChartColors_rsiColor}];
-            [topAttributeText appendAttributedString:attr];
+              // Create the "RSI(14):" part with y-axis color
+    NSString *rsiLabel = @"RSI(14):";
+    NSAttributedString *rsiLabelAttr = [[NSAttributedString alloc] initWithString:rsiLabel attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:ChartStyle_defaultTextSize], NSForegroundColorAttributeName: ChartColors_yAxisTextColor}];
+
+    // Create the value part with the default RSI color
+    NSString *fixedStr = [NSString stringWithFormat:@"%@%@f", @"%.", fixed];
+    NSString *str = [NSString stringWithFormat:fixedStr, curPoint.rsi];
+    NSAttributedString *valueAttr = [[NSAttributedString alloc] initWithString:[str stringByAppendingString:@"    "] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:ChartStyle_defaultTextSize], NSForegroundColorAttributeName: ChartColors_rsiColor}];
+
+    // Append both parts to the top attribute text
+    [topAttributeText appendAttributedString:rsiLabelAttr];
+    [topAttributeText appendAttributedString:valueAttr];
+            // NSString *fixedStr = [NSString stringWithFormat:@"%@%@f", @"RSI(14):%.", fixed];
+            // NSString *str = [NSString stringWithFormat:fixedStr, curPoint.rsi];
+            // NSAttributedString *attr = [[NSAttributedString alloc] initWithString:[str stringByAppendingString:@"    "] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:ChartStyle_defaultTextSize],NSForegroundColorAttributeName: ChartColors_rsiColor}];
+            // [topAttributeText appendAttributedString:attr];
         } break;
         case SecondaryStateWR:
         {

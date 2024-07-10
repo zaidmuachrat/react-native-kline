@@ -145,5 +145,5 @@ RCT_EXPORT_VIEW_PROPERTY(selectedDuration, NSString) //added by Zaid
 RCT_EXPORT_VIEW_PROPERTY(showKDJ, BOOL)//adde by Zaid
 RCT_EXPORT_VIEW_PROPERTY(showMACD, BOOL)//added by Zaid
 RCT_EXPORT_VIEW_PROPERTY(showRSI, BOOL)//added by Zaid
-
+RCT_EXPORT_VIEW_PROPERTY(showVMA, BOOL) 
 @end

@@ -11,8 +11,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface VolChartRenderer : BaseChartRenderer
-
-
+@property(nonatomic, assign) BOOL showVMA;
 @end
 
 NS_ASSUME_NONNULL_END
