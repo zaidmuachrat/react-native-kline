@@ -81,6 +81,7 @@
     _showKDJ = showKDJ;
     [self setNeedsDisplay];
 }
+
 - (void)setShowMACD:(BOOL)showMACD {
     _showMACD = showMACD;
     [self setNeedsDisplay];
@@ -340,7 +341,7 @@
 
 -(void)initRenderer {
     _mainRenderer = [[MainChartRenderer alloc] initWithMaxValue:_mMainMaxValue minValue:_mMainMinValue chartRect:_mainRect candleWidth:_candleWidth topPadding:ChartStyle_topPadding isLine:_isLine state:_mainState];
-    
+     _mainRenderer.showBOLL=self.showBOLL;
     if (_volState != VolStateNONE) {
         _volRenderer = [[VolChartRenderer alloc] initWithMaxValue:_mVolMaxValue minValue:_mVolMinValue chartRect:_volRect candleWidth:_candleWidth topPadding:ChartStyle_childPadding];
                 _volRenderer.showVMA = self.showVMA;  // Add this line
@@ -614,6 +615,10 @@
 }
 - (void)setShowVMA:(BOOL)showVMA {
     _showVMA = showVMA;
+    [self setNeedsDisplay];
+}
+- (void)setShowBOLL:(BOOL)showBOLL {
+    _showBOLL = showBOLL;
     [self setNeedsDisplay];
 }
 -(void)drawRightText:(CGContextRef)context {

@@ -32,6 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL showMACD; // //added by Zaid
 @property (nonatomic, assign) BOOL showRSI; // //added by Zaid
 @property (nonatomic, assign) BOOL showVMA;
+@property (nonatomic, assign) BOOL showBOLL;
 
 - (void) setMainBackgroundColor:(NSString *)mainBackgroundColor;
 - (instancetype)initWithFrame:(CGRect)frame selectedDuration:(NSString *)selectedDuration;

@@ -63,10 +63,15 @@
     }
     if (lastPoint != nil) {
         if(_isLine) {
+            
             [self drawKLine:context lastValue:lastPoint.close curValue:curPoint.close curX:curX];
             if (_state == MainStateMA){
             [self drawMaLine:context lastPoit:lastPoint curPoint:curPoint curX:curX];
+
             }
+            if(self.showBOLL){
+            [self drawBollLine:context lastPoit:lastPoint curPoint:curPoint curX:curX];}
+
         } else if (_state == MainStateMA) {
             [self drawMaLine:context lastPoit:lastPoint curPoint:curPoint curX:curX];
         } else if (_state == MainStateBOLL) {

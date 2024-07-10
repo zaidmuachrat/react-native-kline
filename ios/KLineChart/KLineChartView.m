@@ -103,6 +103,10 @@
     _showVMA = showVMA;
     self.painterView.showVMA = showVMA;
 }
+- (void)setShowBOLL:(BOOL)showBOLL {
+    _showBOLL = showBOLL;
+    self.painterView.showBOLL = showBOLL;
+}
 - (void)setShowMACD:(BOOL)showMACD {
     _showMACD = showMACD;
     self.painterView.showMACD = showMACD;
