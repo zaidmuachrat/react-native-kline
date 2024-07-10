@@ -167,6 +167,7 @@
 
 - (void)drawRect:(CGRect)rect {
     _displayHeight = rect.size.height - ChartStyle_topPadding - ChartStyle_bottomDateHigh;
+    
     CGContextRef context = UIGraphicsGetCurrentContext();
     if(context != NULL) {
         [self divisionRect];
@@ -342,6 +343,8 @@
     
     if (_volState != VolStateNONE) {
         _volRenderer = [[VolChartRenderer alloc] initWithMaxValue:_mVolMaxValue minValue:_mVolMinValue chartRect:_volRect candleWidth:_candleWidth topPadding:ChartStyle_childPadding];
+                _volRenderer.showVMA = self.showVMA;  // Add this line
+
     } else {
         _volRenderer = nil;
     }
@@ -609,7 +612,10 @@
         [_quaternaryRenderer drawTopText:context curPoint:curPoint];
     }
 }
-
+- (void)setShowVMA:(BOOL)showVMA {
+    _showVMA = showVMA;
+    [self setNeedsDisplay];
+}
 -(void)drawRightText:(CGContextRef)context {
     [_mainRenderer drawRightText:context gridRows:ChartStyle_gridRows gridColums:ChartStyle_gridColumns];
     if (_volRenderer != nil) {

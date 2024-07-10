@@ -23,6 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic,assign) BOOL showMACD;
 @property(nonatomic,assign) BOOL showRSI;
 @property(nonatomic,copy) void(^showInfoBlock)(KLineModel *model, BOOL isLeft);
+@property (nonatomic, assign) BOOL showVMA; // Add this line
 
 - (instancetype)initWithFrame:(CGRect)frame
                         datas:(NSArray<KLineModel *> *)datas

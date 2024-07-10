@@ -27,8 +27,7 @@
 }
 - (void)drawChart:(CGContextRef)context lastPoit:(KLineModel *)lastPoint curPoint:(KLineModel *)curPoint curX:(CGFloat)curX {
     [self drawVolChat:context curPoint:curPoint curX:curX];
-
-
+    if (self.showVMA) { // Conditionally draw the VMA lines
         if (lastPoint != nil) {
             if (curPoint.MA5Volume != 0) {
                 [self drawLine:context lastValue:lastPoint.MA5Volume curValue:curPoint.MA5Volume curX:curX color:ChartColors_ma5Color];
@@ -37,6 +36,7 @@
                 [self drawLine:context lastValue:lastPoint.MA10Volume curValue:curPoint.MA10Volume curX:curX color:ChartColors_ma10Color];
             }
         }
+    }
 }
 
 - (void)drawVolChat:(CGContextRef)context curPoint:(KLineModel *)curPoint curX:(CGFloat)curX {

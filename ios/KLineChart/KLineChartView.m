@@ -99,6 +99,10 @@
     _showKDJ = showKDJ;
     self.painterView.showKDJ = showKDJ;
 }
+- (void)setShowVMA:(BOOL)showVMA {
+    _showVMA = showVMA;
+    self.painterView.showVMA = showVMA;
+}
 - (void)setShowMACD:(BOOL)showMACD {
     _showMACD = showMACD;
     self.painterView.showMACD = showMACD;
