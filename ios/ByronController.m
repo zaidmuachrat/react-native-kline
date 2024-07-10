@@ -19,13 +19,13 @@
         _showKDJ = NO; // default value
         _showMACD = NO; // default value
         _showRSI = NO; // default value
+        _showRSI = NO; // default value
         [self initChartView]; // Initialize chart view here
     }
     return self;
 }
 
 - (void)initChartView {
-    // Initialize KLineChartView with selectedDuration and showKDJ
     _chartView = [[KLineChartView alloc] initWithFrame:self.bounds selectedDuration:_selectedDuration];
     _chartView.showKDJ = _showKDJ;
     _chartView.showMACD = _showMACD;
@@ -54,6 +54,7 @@
     _selectedDuration = selectedDuration;
     _chartView.selectedDuration = selectedDuration;
 }
+
 
 - (void)setShowKDJ:(BOOL)showKDJ {
     _showKDJ = showKDJ;

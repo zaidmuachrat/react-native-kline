@@ -109,10 +109,9 @@
 }
 - (instancetype)initWithFrame:(CGRect)frame selectedDuration:(NSString *)selectedDuration {
     self = [super initWithFrame:frame];
-    
+   
     if (self) {
         _selectedDuration = selectedDuration; // Set the selected duration
-
         // Check the value of _selectedDuration and set _scaleX accordingly
         if ([self.selectedDuration isEqualToString:@"1M" ] || [self.selectedDuration isEqualToString:@"5M"]|| [self.selectedDuration isEqualToString:@"10M"]|| [self.selectedDuration isEqualToString:@"30M"]|| [self.selectedDuration isEqualToString:@"1H"]) {
             _scaleX = 2;

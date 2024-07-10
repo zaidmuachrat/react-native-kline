@@ -21,14 +21,14 @@
 #define ChartColors_dnColor   Color(0xffC15466)
 #define ChartColors_volColor   Color(0xff4729AE)
 
-#define ChartColors_macdColor   Color(0xff4729AE)
-#define ChartColors_difColor   Color(0xffC9B885)
-#define ChartColors_deaColor   Color(0xff6CB0A6)
+#define ChartColors_macdColor  Color(0xFF0085F4)
+#define ChartColors_difColor    Color(0xFFFF8B01)
+#define ChartColors_deaColor   Color(0xFFC650FF)
 
-#define ChartColors_kColor   Color(0xffC9B885)
-#define ChartColors_dColor   Color(0xff6CB0A6)
-#define ChartColors_jColor   Color(0xff9979C6)
-#define ChartColors_rsiColor   Color(0xffC9B885)
+#define ChartColors_kColor   Color(0xFF0085F4)
+#define ChartColors_dColor   Color(0xFFFF8B01)
+#define ChartColors_jColor   Color(0xFFC650FF)
+#define ChartColors_rsiColor   Color(0xFF0085F4)
 
 #define ChartColors_wrColor   Color(0xffD2D2B4)
 
