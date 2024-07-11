@@ -182,7 +182,7 @@
     
     // Draw MA text
     if (_state == MainStateMA) {
-        NSString *staticText = @"MA(5,10,30): ";
+        NSString *staticText =self.showBOLL ?  @"      MA(5,10,30): ":@"MA(5,10,30): ";
         NSAttributedString *staticAttr = [[NSAttributedString alloc] initWithString:staticText attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:ChartStyle_defaultTextSize], NSForegroundColorAttributeName: ChartColors_yAxisTextColor}];
         [topAttributeText appendAttributedString:staticAttr];
         
@@ -209,11 +209,12 @@
     }
     
     // Draw BOLL text
-    if (self.showBOLL) {
+    if (self.showBOLL && self.showBOLLText) {
         if (topAttributeText.length > 0) {
-            [topAttributeText appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n"]];
+        [topAttributeText appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n\n"]];
+           
         }
-        NSString *staticText = @"BOLL(5,2.00): ";
+        NSString *staticText =_state == MainStateMA ?   @"      BOLL(5,2.00):": @"BOLL(5,2.00):";
         NSAttributedString *staticAttr = [[NSAttributedString alloc] initWithString:staticText attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:ChartStyle_defaultTextSize], NSForegroundColorAttributeName: ChartColors_yAxisTextColor}];
         [topAttributeText appendAttributedString:staticAttr];
         

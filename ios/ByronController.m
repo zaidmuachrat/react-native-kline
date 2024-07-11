@@ -22,6 +22,7 @@
         _showRSI = NO; // default value
         _showVMA = NO;
         _showBOLL = NO;
+        _showBOLLText=NO;
         [self initChartView]; // Initialize chart view here
     }
     return self;
@@ -34,6 +35,7 @@
     _chartView.showRSI = _showRSI;
     _chartView.showVMA = _showVMA;
     _chartView.showBOLL = _showBOLL;
+    _chartView.showBOLLText = _showBOLLText;
     // Set the delegate
     _chartView.delegate = self;
     
@@ -66,6 +68,10 @@
 - (void)setShowBOLL:(BOOL)showBOLL {
     _showBOLL = showBOLL;
     _chartView.showBOLL = showBOLL;
+}
+- (void)setShowBOLLText:(BOOL)showBOLLText {
+    _showBOLLText = showBOLLText;
+    _chartView.showBOLLText = showBOLLText;
 }
 - (void)setShowMACD:(BOOL)showMACD {
     _showMACD = showMACD;

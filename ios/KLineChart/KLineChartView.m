@@ -107,6 +107,10 @@
     _showBOLL = showBOLL;
     self.painterView.showBOLL = showBOLL;
 }
+- (void)setShowBOLLText:(BOOL)showBOLLText {
+    _showBOLLText = showBOLLText;
+    self.painterView.showBOLLText = showBOLLText;
+}
 - (void)setShowMACD:(BOOL)showMACD {
     _showMACD = showMACD;
     self.painterView.showMACD = showMACD;

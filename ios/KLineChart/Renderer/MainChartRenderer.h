@@ -15,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property(nonatomic,assign) NSString* mainBackgroundColor;
 @property(nonatomic, assign) BOOL showBOLL;
+@property(nonatomic, assign) BOOL showBOLLText;
 
 - (instancetype)initWithMaxValue:(CGFloat)maxValue
                         minValue:(CGFloat)minValue

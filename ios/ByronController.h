@@ -126,6 +126,7 @@
 @property (nonatomic, assign) BOOL requestStatus;
 @property (nonatomic, assign) BOOL showVMA;
 @property (nonatomic, assign) BOOL showBOLL;
+@property (nonatomic, assign) BOOL showBOLLText;
 @property(nonatomic,strong) KLineChartView *chartView;
 
 @end
