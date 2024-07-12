@@ -26,10 +26,8 @@
 @property(nonatomic,assign) CGRect tertiaryRect; // MACD Rect
 @property(nonatomic,assign) CGRect quaternaryRect; // RSI Rect
 @property(nonatomic,assign) CGRect dateRect;
-
 @property(nonatomic,assign) NSUInteger startIndex;
 @property(nonatomic,assign) NSUInteger stopIndex;
-
 @property(nonatomic,assign) NSUInteger mMainMaxIndex;
 @property(nonatomic,assign) NSUInteger mMainMinIndex;
 
@@ -50,7 +48,8 @@
 
 @property(nonatomic,assign) CGFloat mMainHighMaxValue;
 @property(nonatomic,assign) CGFloat mMainLowMinValue;
-
+@property(nonatomic, assign) CGFloat mWRMaxValue; // WR Max Value
+@property(nonatomic, assign) CGFloat mWRMinValue; // WR Min Value
 @property(nonatomic,assign) CGFloat candleWidth;
 
 //var fromat: String = "yyyy-MM-dd"
@@ -95,7 +94,10 @@
     self.candleWidth = scaleX * ChartStyle_candleWidth;
     [self setNeedsDisplay];
 }
-
+- (void)setShowWR:(BOOL)showWR { // Add this method
+    _showWR = showWR;
+    [self setNeedsDisplay];
+}
 - (void)setIsLongPress:(BOOL)isLongPress {
     _isLongPress = isLongPress;
     [self setNeedsDisplay];
@@ -196,6 +198,7 @@
     CGFloat secondaryHeight = _showKDJ ? INDICATOR_HEIGHT : 0;
     CGFloat tertiaryHeight = _showMACD ? INDICATOR_HEIGHT : 0;
     CGFloat quaternaryHeight = _showRSI ? INDICATOR_HEIGHT : 0;
+    CGFloat wrHeight = _showWR ? INDICATOR_HEIGHT : 0; // Add this line
     CGFloat dateHeight = ChartStyle_bottomDateHigh;
 
     self.mainRect = CGRectMake(0, ChartStyle_topPadding, self.frame.size.width, MAIN_CHART_HEIGHT);
@@ -230,9 +233,15 @@
         self.quaternaryRect = CGRectZero;
     }
 
+    if (_showWR) { // Add this block
+        self.wrRect = CGRectMake(0, currentY, self.frame.size.width, wrHeight);
+        currentY = CGRectGetMaxY(self.wrRect);
+    } else {
+        self.wrRect = CGRectZero;
+    }
+
     self.dateRect = CGRectMake(0, currentY, self.frame.size.width, dateHeight);
 }
-
 -(void)calculateValue {
     if(self.datas.count == 0) { return; }
     CGFloat itemWidth = _candleWidth + ChartStyle_canldeMargin;
@@ -264,6 +273,8 @@
     _mTertiaryMinValue = CGFLOAT_MAX; // Initialize MACD min value
     _mQuaternaryMaxValue = -CGFLOAT_MAX; // Initialize RSI max value
     _mQuaternaryMinValue = CGFLOAT_MAX; // Initialize RSI min value
+    _mWRMaxValue = -CGFLOAT_MAX; // Initialize WR max value
+    _mWRMinValue = CGFLOAT_MAX; // Initialize WR min value
     for (NSUInteger index = _startIndex; index <= _stopIndex; index++) {
         KLineModel *item = self.datas[index];
         [self getMianMaxMinValue:item i:index];
@@ -271,6 +282,7 @@
         [self getSecondaryMaxMinValue:item];
         [self getTertiaryMaxMinValue:item]; // Calculate MACD max and min values
         [self getQuaternaryMaxMinValue:item]; // Calculate RSI max and min values
+        [self getWRMaxMinValue:item]; // Calculate WR max and min values
     }
 }
 
@@ -319,6 +331,13 @@
         }
     }
 }
+-(void)getWRMaxMinValue:(KLineModel *)item {
+    if (item.r != CGFLOAT_MAX) { // Exclude invalid WR values
+        _mWRMaxValue = MAX(_mWRMaxValue, item.r);
+        _mWRMinValue = MIN(_mWRMinValue, item.r);
+    }
+}
+
 -(void)getVolMaxMinValue:(KLineModel *)item {
     _mVolMaxValue = MAX(_mVolMaxValue, MAX(item.vol, MAX(item.MA5Volume, item.MA10Volume)));
     _mVolMinValue = MIN(_mVolMinValue, MIN(item.vol, MIN(item.MA5Volume, item.MA10Volume)));
@@ -338,14 +357,13 @@
     _mQuaternaryMaxValue = MAX(_mQuaternaryMaxValue, item.rsi);
     _mQuaternaryMinValue = MIN(_mQuaternaryMinValue, item.rsi);
 }
-
 -(void)initRenderer {
     _mainRenderer = [[MainChartRenderer alloc] initWithMaxValue:_mMainMaxValue minValue:_mMainMinValue chartRect:_mainRect candleWidth:_candleWidth topPadding:ChartStyle_topPadding isLine:_isLine state:_mainState];
      _mainRenderer.showBOLL=self.showBOLL;
      _mainRenderer.showBOLLText=self.showBOLLText;
     if (_volState != VolStateNONE) {
         _volRenderer = [[VolChartRenderer alloc] initWithMaxValue:_mVolMaxValue minValue:_mVolMinValue chartRect:_volRect candleWidth:_candleWidth topPadding:ChartStyle_childPadding];
-                _volRenderer.showVMA = self.showVMA;  // Add this line
+        _volRenderer.showVMA = self.showVMA;  // Add this line
 
     } else {
         _volRenderer = nil;
@@ -356,7 +374,10 @@
     _tertiaryRenderer = [[SecondaryChartRenderer alloc] initWithMaxValue:_mTertiaryMaxValue minValue:_mTertiaryMinValue chartRect:_tertiaryRect candleWidth:_candleWidth topPadding:ChartStyle_childPadding state:SecondaryStateMacd]; // MACD Renderer
     
     _quaternaryRenderer = [[SecondaryChartRenderer alloc] initWithMaxValue:_mQuaternaryMaxValue minValue:_mQuaternaryMinValue chartRect:_quaternaryRect candleWidth:_candleWidth topPadding:ChartStyle_childPadding state:SecondaryStateRSI]; // RSI Renderer
+
+    _wrRenderer = [[SecondaryChartRenderer alloc] initWithMaxValue:_mWRMaxValue minValue:_mWRMinValue chartRect:_wrRect candleWidth:_candleWidth topPadding:ChartStyle_childPadding state:SecondaryStateWR]; // WR Renderer
 }
+
 
 -(void)drawBgColor:(CGContextRef)context rect:(CGRect)rect {
     CGContextSetFillColorWithColor(context, [UIColor colorWithHexString:_mainBackgroundColor].CGColor);
@@ -374,6 +395,9 @@
     if(_quaternaryRenderer != nil) {
         [_quaternaryRenderer drawBg:context bgColor:_mainBackgroundColor];
     }
+    if(_wrRenderer != nil) {
+        [_wrRenderer drawBg:context bgColor:_mainBackgroundColor];
+    }
 }
 
 -(void)drawGrid:(CGContextRef)context {
@@ -390,11 +414,13 @@
     if(_quaternaryRenderer != nil) {
         [_quaternaryRenderer drawGrid:context gridRows:ChartStyle_gridRows gridColums:ChartStyle_gridColumns];
     }
+    if(_wrRenderer != nil) {
+        [_wrRenderer drawGrid:context gridRows:ChartStyle_gridRows gridColums:ChartStyle_gridColumns];
+    }
     CGContextSetLineWidth(context, 1);
     CGContextAddRect(context, self.bounds);
     CGContextDrawPath(context, kCGPathStroke);
 }
-
 -(void)drawChart:(CGContextRef)context {
     for (NSUInteger index = _startIndex; index <= _stopIndex; index++) {
         KLineModel *curPoint = self.datas[index];
@@ -422,8 +448,12 @@
         if (_showRSI) {
             [_quaternaryRenderer drawChart:context lastPoit:lastPoint curPoint:curPoint curX:_curX];
         }
+        if (_showWR) {
+            [_wrRenderer drawChart:context lastPoit:lastPoint curPoint:curPoint curX:_curX];
+        }
     }
 }
+
 
 -(void)drawDate:(CGContextRef)context {
     CGFloat cloumSpace = self.frame.size.width / (CGFloat)ChartStyle_gridColumns;
@@ -613,6 +643,9 @@
     if (_showRSI) {
         [_quaternaryRenderer drawTopText:context curPoint:curPoint];
     }
+    if (_showWR) {
+        [_wrRenderer drawTopText:context curPoint:curPoint];
+    }
 }
 - (void)setShowVMA:(BOOL)showVMA {
     _showVMA = showVMA;
@@ -639,6 +672,9 @@
     }
     if (_quaternaryRenderer != nil) {
         [_quaternaryRenderer drawRightText:context gridRows:ChartStyle_gridRows gridColums:ChartStyle_gridColumns];
+    }
+    if (_wrRenderer != nil) {
+        [_wrRenderer drawRightText:context gridRows:ChartStyle_gridRows gridColums:ChartStyle_gridColumns];
     }
 }
 

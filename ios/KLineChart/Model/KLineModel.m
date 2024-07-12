@@ -15,6 +15,7 @@
     self = [super init];
     if (self) {
         [self setValuesForKeysWithDictionary:dict];
+         _r = CGFLOAT_MAX;
     }
     return self;
 }

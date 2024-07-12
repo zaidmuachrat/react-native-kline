@@ -33,6 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL showRSI; // //added by Zaid
 @property (nonatomic, assign) BOOL showVMA;
 @property (nonatomic, assign) BOOL showBOLL;
+@property (nonatomic, assign) BOOL showWR;
 @property (nonatomic, assign) BOOL showBOLLText;
 
 - (void) setMainBackgroundColor:(NSString *)mainBackgroundColor;

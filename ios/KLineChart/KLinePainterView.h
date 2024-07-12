@@ -1,6 +1,7 @@
 #import <UIKit/UIKit.h>
 #import "KLineModel.h"
 #import "KLineState.h"
+#import "SecondaryChartRenderer.h" // Import the class
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -26,6 +27,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL showVMA; 
 @property (nonatomic, assign) BOOL showBOLL; 
 @property (nonatomic, assign) BOOL showBOLLText; 
+@property (nonatomic, assign) BOOL showWR;
+@property(nonatomic, assign) CGRect wrRect;
+@property (nonatomic, strong) SecondaryChartRenderer *wrRenderer;
 
 - (instancetype)initWithFrame:(CGRect)frame
                         datas:(NSArray<KLineModel *> *)datas

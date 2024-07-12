@@ -95,6 +95,10 @@
 - (void)setMainBackgroundColor:(NSString *)mainBackgroundColor {
     self.painterView.mainBackgroundColor = mainBackgroundColor;
 }
+- (void)setShowWR:(BOOL)showWR {
+    _showWR = showWR;
+    self.painterView.showWR = showWR;
+}
 - (void)setShowKDJ:(BOOL)showKDJ {
     _showKDJ = showKDJ;
     self.painterView.showKDJ = showKDJ;
