@@ -332,14 +332,10 @@
             max14 = MAX(max14, dataList[index].high);
             min14 = MIN(min14, dataList[index].low);
         }
-        if (i < 13) {
-            entity.r = CGFLOAT_MAX;
+        if (i < 13 || (max14 - min14) == 0) {
+            entity.r = CGFLOAT_MAX;  // Use CGFLOAT_MAX to ignore 0 values
         } else {
-            if ((max14 - min14) == 0) {
-                entity.r = CGFLOAT_MAX;
-            } else {
-                entity.r = 100 * (max14 - dataList[i].close) / (max14 - min14);
-            }
+            entity.r = -100 * (max14 - dataList[i].close) / (max14 - min14); // WR values can be negative
         }
     }
 }

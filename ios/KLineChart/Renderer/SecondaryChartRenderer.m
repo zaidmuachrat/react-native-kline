@@ -67,7 +67,7 @@
                 [self drawLine:context lastValue:lastPoint.rsi curValue:curPoint.rsi curX:curX color:ChartColors_rsiColor];
             }
         }
-    } else if (_state == SecondaryStateWR) {
+    }  else if (_state == SecondaryStateWR) {
         if (lastPoint != nil) {
             if (curPoint.r != CGFLOAT_MAX && lastPoint.r != CGFLOAT_MAX) {
                 [self drawLine:context lastValue:lastPoint.r curValue:curPoint.r curX:curX color:ChartColors_wrColor];
@@ -156,15 +156,16 @@
         } break;
         case SecondaryStateWR:
         {
-            // Create the "WR(14):" part with y-axis color
             NSString *wrLabel = @"WR(14):";
             NSAttributedString *wrLabelAttr = [[NSAttributedString alloc] initWithString:wrLabel attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:ChartStyle_defaultTextSize], NSForegroundColorAttributeName: ChartColors_yAxisTextColor}];
             [topAttributeText appendAttributedString:wrLabelAttr];
 
-            // Create the value part with the default WR color
             if (curPoint.r != CGFLOAT_MAX) {
                 NSString *fixedStr = [NSString stringWithFormat:@"%@%@f", @"%.", fixed];
                 NSString *str = [NSString stringWithFormat:fixedStr, curPoint.r];
+                if ([str isEqualToString:@"-0.00"]) {
+                    str = @"0.00";
+                }
                 NSAttributedString *valueAttr = [[NSAttributedString alloc] initWithString:[str stringByAppendingString:@"    "] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:ChartStyle_defaultTextSize], NSForegroundColorAttributeName: ChartColors_wrColor}];
                 [topAttributeText appendAttributedString:valueAttr];
             }
