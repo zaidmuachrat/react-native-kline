@@ -30,7 +30,7 @@
 #define ChartColors_jColor   Color(0xFFC650FF)
 #define ChartColors_rsiColor   Color(0xFF0085F4)
 
-#define ChartColors_wrColor   Color(0xffD2D2B4)
+#define ChartColors_wrColor   Color(0xFF0085F4)
 
 #define ChartColors_yAxisTextColor   Color(0xff70839E)  //右边y轴刻度
 #define ChartColors_xAxisTextColor   Color(0xff60738E)  //下方时间刻度

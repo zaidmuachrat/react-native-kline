@@ -62,16 +62,20 @@
         [self drawCandle:context curPoint:curPoint curX:curX];
     }
     if (lastPoint != nil) {
+        if (self.showBOLL) {
+            [self drawBollLine:context lastPoit:lastPoint curPoint:curPoint curX:curX];
+        }
         if(_isLine) {
+            
             [self drawKLine:context lastValue:lastPoint.close curValue:curPoint.close curX:curX];
             if (_state == MainStateMA){
             [self drawMaLine:context lastPoit:lastPoint curPoint:curPoint curX:curX];
+
             }
+          
         } else if (_state == MainStateMA) {
             [self drawMaLine:context lastPoit:lastPoint curPoint:curPoint curX:curX];
-        } else if (_state == MainStateBOLL) {
-            [self drawBollLine:context lastPoit:lastPoint curPoint:curPoint curX:curX];
-        }
+        } 
     }
 }
 - (void)drawKLine:(CGContextRef)context lastValue:(CGFloat)lastValue curValue:(CGFloat)curValue curX:(CGFloat)curX  {
@@ -123,19 +127,26 @@
            [self drawLine:context lastValue:lastPoint.MA30Price curValue:curPoint.MA30Price curX:curX color:ChartColors_ma30Color];
     }
 }
-
-
 - (void)drawBollLine:(CGContextRef)context lastPoit:(KLineModel *)lastPoint curPoint:(KLineModel *)curPoint curX:(CGFloat)curX {
-    if(curPoint.up != 0) {
+    // Clip to the chart rectangle
+    CGContextSaveGState(context);
+    CGContextClipToRect(context, self.chartRect);
+    
+    if (curPoint.up != 0) {
         [self drawLine:context lastValue:lastPoint.up curValue:curPoint.up curX:curX color:ChartColors_ma5Color];
     }
-    if(curPoint.mb != 0) {
-           [self drawLine:context lastValue:lastPoint.mb curValue:curPoint.mb curX:curX color:ChartColors_ma10Color];
+    if (curPoint.mb != 0) {
+        [self drawLine:context lastValue:lastPoint.mb curValue:curPoint.mb curX:curX color:ChartColors_ma10Color];
     }
-    if(curPoint.dn != 0) {
-           [self drawLine:context lastValue:lastPoint.dn curValue:curPoint.dn curX:curX color:ChartColors_ma30Color];
+    if (curPoint.dn != 0) {
+        [self drawLine:context lastValue:lastPoint.dn curValue:curPoint.dn curX:curX color:ChartColors_ma30Color];
     }
+    
+    // Restore the previous graphics state
+    CGContextRestoreGState(context);
 }
+
+
 
 
 - (void)drawCandle:(CGContextRef)context curPoint:(KLineModel *)curPoint curX:(CGFloat)curX {
@@ -163,31 +174,72 @@
     
 }
 
+
+
 - (void)drawTopText:(CGContextRef)context curPoint:(KLineModel *)curPoint {
     NSNumber *fixed = [KLineStateManager manager].pricePrecision;
     NSMutableAttributedString *topAttributeText = [[NSMutableAttributedString alloc] init];
-    NSString *staticText = @"MA(5,10,30): ";
-    NSAttributedString *staticAttr = [[NSAttributedString alloc] initWithString:staticText attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:ChartStyle_defaultTextSize], NSForegroundColorAttributeName:  ChartColors_yAxisTextColor}];
-    [topAttributeText appendAttributedString:staticAttr];
-    if(_state==MainStateMA){
-    if(curPoint.MA5Price != 0) {
-        NSString *fixedStr = [NSString stringWithFormat:@"%@%@f", @"MA5:%.", fixed];
-        NSString *str = [NSString stringWithFormat:fixedStr,curPoint.MA5Price];
-        NSAttributedString *attr = [[NSAttributedString alloc] initWithString:[str stringByAppendingString:@"    "] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:ChartStyle_defaultTextSize],NSForegroundColorAttributeName: ChartColors_ma5Color}];
-        [topAttributeText appendAttributedString:attr];
+    
+    // Draw MA text
+    if (_state == MainStateMA) {
+        NSString *staticText =self.showBOLL ?  @"      MA(5,10,30): ":@"MA(5,10,30): ";
+        NSAttributedString *staticAttr = [[NSAttributedString alloc] initWithString:staticText attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:ChartStyle_defaultTextSize], NSForegroundColorAttributeName: ChartColors_yAxisTextColor}];
+        [topAttributeText appendAttributedString:staticAttr];
+        
+        if (curPoint.MA5Price != 0) {
+            NSString *fixedStr = [NSString stringWithFormat:@"%@%@f", @"MA5:%.", fixed];
+            NSString *str = [NSString stringWithFormat:fixedStr, curPoint.MA5Price];
+            NSAttributedString *attr = [[NSAttributedString alloc] initWithString:[str stringByAppendingString:@"    "] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:ChartStyle_defaultTextSize], NSForegroundColorAttributeName: ChartColors_ma5Color}];
+            [topAttributeText appendAttributedString:attr];
+        }
+        
+        if (curPoint.MA10Price != 0) {
+            NSString *fixedStr = [NSString stringWithFormat:@"%@%@f", @"MA10:%.", fixed];
+            NSString *str = [NSString stringWithFormat:fixedStr, curPoint.MA10Price];
+            NSAttributedString *attr = [[NSAttributedString alloc] initWithString:[str stringByAppendingString:@"    "] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:ChartStyle_defaultTextSize], NSForegroundColorAttributeName: ChartColors_ma10Color}];
+            [topAttributeText appendAttributedString:attr];
+        }
+        
+        if (curPoint.MA30Price != 0) {
+            NSString *fixedStr = [NSString stringWithFormat:@"%@%@f", @"MA30:%.", fixed];
+            NSString *str = [NSString stringWithFormat:fixedStr, curPoint.MA30Price];
+            NSAttributedString *attr = [[NSAttributedString alloc] initWithString:[str stringByAppendingString:@"    "] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:ChartStyle_defaultTextSize], NSForegroundColorAttributeName: ChartColors_ma30Color}];
+            [topAttributeText appendAttributedString:attr];
+        }
     }
-    if(curPoint.MA10Price != 0) {
-        NSString *fixedStr = [NSString stringWithFormat:@"%@%@f", @"MA10:%.", fixed];
-        NSString *str = [NSString stringWithFormat:fixedStr,curPoint.MA10Price];
-        NSAttributedString *attr = [[NSAttributedString alloc] initWithString:[str stringByAppendingString:@"    "] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:ChartStyle_defaultTextSize],NSForegroundColorAttributeName: ChartColors_ma10Color}];
-        [topAttributeText appendAttributedString:attr];
+    
+    // Draw BOLL text
+    if (self.showBOLL && self.showBOLLText) {
+        if (topAttributeText.length > 0) {
+        [topAttributeText appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n\n"]];
+           
+        }
+        NSString *staticText =_state == MainStateMA ?   @"      BOLL(5,2.00):": @"BOLL(5,2.00):";
+        NSAttributedString *staticAttr = [[NSAttributedString alloc] initWithString:staticText attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:ChartStyle_defaultTextSize], NSForegroundColorAttributeName: ChartColors_yAxisTextColor}];
+        [topAttributeText appendAttributedString:staticAttr];
+        
+        if (curPoint.up != 0) {
+            NSString *fixedStr = [NSString stringWithFormat:@"%@%@f", @"UPPER:%.", fixed];
+            NSString *str = [NSString stringWithFormat:fixedStr, curPoint.up];
+            NSAttributedString *attr = [[NSAttributedString alloc] initWithString:[str stringByAppendingString:@"    "] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:ChartStyle_defaultTextSize], NSForegroundColorAttributeName: ChartColors_ma5Color}];
+            [topAttributeText appendAttributedString:attr];
+        }
+        
+        if (curPoint.mb != 0) {
+            NSString *fixedStr = [NSString stringWithFormat:@"%@%@f", @"MID:%.", fixed];
+            NSString *str = [NSString stringWithFormat:fixedStr, curPoint.mb];
+            NSAttributedString *attr = [[NSAttributedString alloc] initWithString:[str stringByAppendingString:@"    "] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:ChartStyle_defaultTextSize], NSForegroundColorAttributeName: ChartColors_ma10Color}];
+            [topAttributeText appendAttributedString:attr];
+        }
+        
+        if (curPoint.dn != 0) {
+            NSString *fixedStr = [NSString stringWithFormat:@"%@%@f", @"LOWER:%.", fixed];
+            NSString *str = [NSString stringWithFormat:fixedStr, curPoint.dn];
+            NSAttributedString *attr = [[NSAttributedString alloc] initWithString:[str stringByAppendingString:@"    "] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:ChartStyle_defaultTextSize], NSForegroundColorAttributeName: ChartColors_ma30Color}];
+            [topAttributeText appendAttributedString:attr];
+        }
     }
-    if(curPoint.MA30Price != 0) {
-        NSString *fixedStr = [NSString stringWithFormat:@"%@%@f", @"MA30:%.", fixed];
-        NSString *str = [NSString stringWithFormat:fixedStr,curPoint.MA30Price];
-        NSAttributedString *attr = [[NSAttributedString alloc] initWithString:[str stringByAppendingString:@"    "] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:ChartStyle_defaultTextSize],NSForegroundColorAttributeName: ChartColors_ma30Color}];
-        [topAttributeText appendAttributedString:attr];
-    }}
+    
     [topAttributeText drawAtPoint:CGPointMake(5, 6)];
 }
 

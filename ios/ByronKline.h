@@ -7,6 +7,10 @@
 @property (nonatomic, assign) BOOL showMACD;
 @property (nonatomic, assign) BOOL showRSI;
 @property (nonatomic, assign) BOOL showVMA;
+@property (nonatomic, assign) BOOL showBOLL;
+@property (nonatomic, assign) BOOL showBOLLText;
+@property (nonatomic, assign) BOOL showWR; 
+
 
 
 @end

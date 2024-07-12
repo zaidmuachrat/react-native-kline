@@ -95,6 +95,10 @@
 - (void)setMainBackgroundColor:(NSString *)mainBackgroundColor {
     self.painterView.mainBackgroundColor = mainBackgroundColor;
 }
+- (void)setShowWR:(BOOL)showWR {
+    _showWR = showWR;
+    self.painterView.showWR = showWR;
+}
 - (void)setShowKDJ:(BOOL)showKDJ {
     _showKDJ = showKDJ;
     self.painterView.showKDJ = showKDJ;
@@ -102,6 +106,14 @@
 - (void)setShowVMA:(BOOL)showVMA {
     _showVMA = showVMA;
     self.painterView.showVMA = showVMA;
+}
+- (void)setShowBOLL:(BOOL)showBOLL {
+    _showBOLL = showBOLL;
+    self.painterView.showBOLL = showBOLL;
+}
+- (void)setShowBOLLText:(BOOL)showBOLLText {
+    _showBOLLText = showBOLLText;
+    self.painterView.showBOLLText = showBOLLText;
 }
 - (void)setShowMACD:(BOOL)showMACD {
     _showMACD = showMACD;

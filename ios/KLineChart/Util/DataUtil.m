@@ -313,35 +313,31 @@
     }
 }
 
+
 +(void)calcWR:(NSArray<KLineModel *> *)dataList isLast:(BOOL)isLast {
     int i = 0;
     int count = (int)[dataList count];
     if (isLast && dataList.count > 1) {
-      i = count - 1;
+        i = count - 1;
     }
     for (; i < dataList.count; i++) {
-      KLineModel *entity = dataList[i];
-      int startIndex = i - 14;
-      if (startIndex < 0) {
-        startIndex = 0;
-      }
-      CGFloat max14 =  -CGFLOAT_MAX;
-      CGFloat min14 = CGFLOAT_MAX;
-      for (int index = startIndex; index <= i; index++) {
-        max14 = MAX(max14, dataList[index].high);
-        min14 = MIN(min14, dataList[index].low);
-      }
-      if (i < 13) {
-        entity.r = 0;
-      } else {
-        if ((max14 - min14) == 0) {
-          entity.r = 0;
-        } else {
-          entity.r = 100 * (max14 - dataList[i].close) / (max14 - min14);
+        KLineModel *entity = dataList[i];
+        int startIndex = i - 14;
+        if (startIndex < 0) {
+            startIndex = 0;
         }
-      }
+        CGFloat max14 = -CGFLOAT_MAX;
+        CGFloat min14 = CGFLOAT_MAX;
+        for (int index = startIndex; index <= i; index++) {
+            max14 = MAX(max14, dataList[index].high);
+            min14 = MIN(min14, dataList[index].low);
+        }
+        if (i < 13 || (max14 - min14) == 0) {
+            entity.r = CGFLOAT_MAX;  // Use CGFLOAT_MAX to ignore 0 values
+        } else {
+            entity.r = -100 * (max14 - dataList[i].close) / (max14 - min14); // WR values can be negative
+        }
     }
 }
-
 
 @end
