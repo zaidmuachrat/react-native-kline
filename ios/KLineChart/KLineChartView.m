@@ -5,7 +5,7 @@
 #import "KLinePainterView.h"
 #import "KLineInfoView.h"
 
-@interface KLineChartView()
+@interface KLineChartView() <UIGestureRecognizerDelegate>
 @property(nonatomic,strong) KLinePainterView *painterView;
 @property(nonatomic,strong) KLineInfoView *infoView;
 
@@ -123,6 +123,61 @@
     _showRSI = showRSI;
     self.painterView.showRSI = showRSI;
 }
+// - (instancetype)initWithFrame:(CGRect)frame selectedDuration:(NSString *)selectedDuration {
+//     self = [super initWithFrame:frame];
+   
+//     if (self) {
+//         _selectedDuration = selectedDuration; // Set the selected duration
+//         // Check the value of _selectedDuration and set _scaleX accordingly
+//         if ([self.selectedDuration isEqualToString:@"1M" ] || [self.selectedDuration isEqualToString:@"5M"]|| [self.selectedDuration isEqualToString:@"10M"]|| [self.selectedDuration isEqualToString:@"30M"]|| [self.selectedDuration isEqualToString:@"1H"]) {
+//             _scaleX = 2;
+//         } else if ([_selectedDuration isEqualToString:@"3M"]) {
+//             _scaleX = 1.5;
+//         } else {
+//             _scaleX = 0.2;
+//         }
+
+       
+//         _mainState = MainStateMA;
+//         _secondaryState = SecondaryStateWR;
+//         _scrollX = -self.frame.size.width / 5 + ChartStyle_candleWidth / 2;
+//         [self initIndicatirs];
+//         _painterView = [[KLinePainterView alloc] initWithFrame:self.bounds
+//                                                         datas:_datas
+//                                                       scrollX:_scrollX
+//                                                        isLine:_isLine
+//                                                        scaleX:_scaleX
+//                                                   isLongPress:_isLongPress
+//                                                     mainState:_mainState
+//                                                secondaryState:_secondaryState
+//                                              selectedDuration:_selectedDuration]; // Use the correct initializer
+//         [self addSubview:_painterView];
+//         __weak typeof(self) weakSelf = self;
+//         _painterView.showInfoBlock = ^(KLineModel * _Nonnull model, BOOL isLeft) {
+//             weakSelf.infoView.model = model;
+//             [weakSelf addSubview:weakSelf.infoView];
+//             CGFloat padding = 5;
+//             if (isLeft) {
+//                 weakSelf.infoView.frame = CGRectMake(padding, 30, weakSelf.infoView.frame.size.width, weakSelf.infoView.frame.size.height);
+//             } else {
+//                 weakSelf.infoView.frame = CGRectMake(weakSelf.frame.size.width - weakSelf.infoView.frame.size.width - padding, 30, weakSelf.infoView.frame.size.width, weakSelf.infoView.frame.size.height);
+//             }
+//         };
+
+//         // Add gesture recognizers
+//         UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(dragKlineEvent:)];
+//         UILongPressGestureRecognizer *longGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressKlineEvent:)];
+//         UIPinchGestureRecognizer *pinGesture = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(secalXEvent:)];
+//         UITapGestureRecognizer *tapPress = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapPressKlineEvent:)];
+        
+//         [_painterView addGestureRecognizer:panGesture];
+//         [_painterView addGestureRecognizer:longGesture];
+//         [_painterView addGestureRecognizer:pinGesture];
+//         [_painterView addGestureRecognizer:tapPress];
+//     }
+    
+//     return self;
+// }
 - (instancetype)initWithFrame:(CGRect)frame selectedDuration:(NSString *)selectedDuration {
     self = [super initWithFrame:frame];
    
@@ -166,10 +221,14 @@
 
         // Add gesture recognizers
         UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(dragKlineEvent:)];
+        panGesture.delegate = self; // Set delegate
         UILongPressGestureRecognizer *longGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressKlineEvent:)];
+        longGesture.delegate = self; // Set delegate
         UIPinchGestureRecognizer *pinGesture = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(secalXEvent:)];
+        pinGesture.delegate = self; // Set delegate
         UITapGestureRecognizer *tapPress = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapPressKlineEvent:)];
-        
+        tapPress.delegate = self; // Set delegate
+
         [_painterView addGestureRecognizer:panGesture];
         [_painterView addGestureRecognizer:longGesture];
         [_painterView addGestureRecognizer:pinGesture];
@@ -177,6 +236,25 @@
     }
     
     return self;
+}
+#pragma mark - UIGestureRecognizerDelegate
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+    if ([gestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]] && [otherGestureRecognizer.view isDescendantOfView:self.superview]) {
+        CGPoint translation = [(UIPanGestureRecognizer *)gestureRecognizer translationInView:self];
+        // Check if the gesture is more vertical than horizontal
+        return fabs(translation.y) > fabs(translation.x);
+    }
+    return NO;
+}
+
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
+    if ([gestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]]) {
+        CGPoint translation = [(UIPanGestureRecognizer *)gestureRecognizer translationInView:self];
+        // Allow vertical scrolling to be handled by parent
+        return fabs(translation.x) > fabs(translation.y);
+    }
+    return YES;
 }
 -(void)initIndicatirs {
     CGFloat dataLength = ((CGFloat)_datas.count) * (ChartStyle_candleWidth * _scaleX + ChartStyle_canldeMargin) - ChartStyle_canldeMargin;
