@@ -491,7 +491,14 @@ export interface ByronKlineProps {
    * 交易量图例距离量视图上边缘的距离
    */
   volLegendMarginTop: number;
-  selectedDuration?:string
+  selectedDuration?: string
+  showKDJ?: boolean;
+  showMACD?: boolean;
+  showVMA?: boolean;
+  showRSI?: boolean;
+  showBOLLText?: boolean;
+  showBOLL?: boolean;
+  showWR?: boolean;
 }
 
 declare class ByronKlineComponent extends React.Component<
