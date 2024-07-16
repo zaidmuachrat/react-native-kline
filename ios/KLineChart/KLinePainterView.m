@@ -455,19 +455,35 @@
 }
 
 
--(void)drawDate:(CGContextRef)context {
+- (void)drawDate:(CGContextRef)context {
     CGFloat cloumSpace = self.frame.size.width / (CGFloat)ChartStyle_gridColumns;
-
-    for (int i = 0; i < ChartStyle_gridColumns; i++) {
-        NSUInteger index = [self calculateIndexWithSelectX: cloumSpace * (CGFloat)i];
-        if([self outRangeIndex:index]) { continue; }
-        KLineModel *data = self.datas[index];
-        NSString *dataStr = [self calculateDateText:data.id];
-        CGRect rect = [dataStr getRectWithFontSize:ChartStyle_bottomDatefontSize];
-        CGFloat y = CGRectGetMinY(self.dateRect) + (ChartStyle_bottomDateHigh - rect.size.height) / 2;
-        [self.mainRenderer drawText:dataStr atPoint:CGPointMake(cloumSpace * i - rect.size.width / 2, y) fontSize:ChartStyle_bottomDatefontSize textColor:ChartColors_bottomDateTextColor];
+    
+    if ([self.selectedDuration isEqualToString:@"1D"] && _scaleX <= 0.02) {
+        // Show only "10:00" and "15:00" for 1D duration when fully zoomed out
+        NSString *startTime = @"10:00";
+        NSString *endTime = @"15:00";
+        
+        CGRect startRect = [startTime getRectWithFontSize:ChartStyle_bottomDatefontSize];
+        CGFloat y = CGRectGetMinY(self.dateRect) + (ChartStyle_bottomDateHigh - startRect.size.height) / 2;
+        
+        [self.mainRenderer drawText:startTime atPoint:CGPointMake(0, y) fontSize:ChartStyle_bottomDatefontSize textColor:ChartColors_bottomDateTextColor];
+        
+        CGRect endRect = [endTime getRectWithFontSize:ChartStyle_bottomDatefontSize];
+        [self.mainRenderer drawText:endTime atPoint:CGPointMake(self.frame.size.width - endRect.size.width, y) fontSize:ChartStyle_bottomDatefontSize textColor:ChartColors_bottomDateTextColor];
+    } else {
+        // Default behavior for other durations and when zoomed in
+        for (int i = 0; i < ChartStyle_gridColumns; i++) {
+            NSUInteger index = [self calculateIndexWithSelectX: cloumSpace * (CGFloat)i];
+            if([self outRangeIndex:index]) { continue; }
+            KLineModel *data = self.datas[index];
+            NSString *dataStr = [self calculateDateText:data.id];
+            CGRect rect = [dataStr getRectWithFontSize:ChartStyle_bottomDatefontSize];
+            CGFloat y = CGRectGetMinY(self.dateRect) + (ChartStyle_bottomDateHigh - rect.size.height) / 2;
+            [self.mainRenderer drawText:dataStr atPoint:CGPointMake(cloumSpace * i - rect.size.width / 2, y) fontSize:ChartStyle_bottomDatefontSize textColor:ChartColors_bottomDateTextColor];
+        }
     }
 }
+
 
 -(void)drawMaxAndMin:(CGContextRef)context {
     if(_isLine) { return; }
