@@ -183,9 +183,11 @@
    
     if (self) {
         _selectedDuration = selectedDuration; // Set the selected duration
-        // Check the value of _selectedDuration and set _scaleX accordingly
-        if ([self.selectedDuration isEqualToString:@"1M" ] || [self.selectedDuration isEqualToString:@"5M"]|| [self.selectedDuration isEqualToString:@"10M"]|| [self.selectedDuration isEqualToString:@"30M"]|| [self.selectedDuration isEqualToString:@"1H"]) {
-            _scaleX = 2;
+       if ([self.selectedDuration isEqualToString:@"1D"]) {
+            _scaleX = -0.02;
+        }
+       else if ([self.selectedDuration isEqualToString:@"1M" ] || [self.selectedDuration isEqualToString:@"5M"]|| [self.selectedDuration isEqualToString:@"10M"]|| [self.selectedDuration isEqualToString:@"30M"]|| [self.selectedDuration isEqualToString:@"1H"]) {
+            _scaleX = 2.0;
         } else if ([_selectedDuration isEqualToString:@"3M"]) {
             _scaleX = 1.5;
         } else {
