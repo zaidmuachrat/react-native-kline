@@ -123,61 +123,7 @@
     _showRSI = showRSI;
     self.painterView.showRSI = showRSI;
 }
-// - (instancetype)initWithFrame:(CGRect)frame selectedDuration:(NSString *)selectedDuration {
-//     self = [super initWithFrame:frame];
-   
-//     if (self) {
-//         _selectedDuration = selectedDuration; // Set the selected duration
-//         // Check the value of _selectedDuration and set _scaleX accordingly
-//         if ([self.selectedDuration isEqualToString:@"1M" ] || [self.selectedDuration isEqualToString:@"5M"]|| [self.selectedDuration isEqualToString:@"10M"]|| [self.selectedDuration isEqualToString:@"30M"]|| [self.selectedDuration isEqualToString:@"1H"]) {
-//             _scaleX = 2;
-//         } else if ([_selectedDuration isEqualToString:@"3M"]) {
-//             _scaleX = 1.5;
-//         } else {
-//             _scaleX = 0.2;
-//         }
 
-       
-//         _mainState = MainStateMA;
-//         _secondaryState = SecondaryStateWR;
-//         _scrollX = -self.frame.size.width / 5 + ChartStyle_candleWidth / 2;
-//         [self initIndicatirs];
-//         _painterView = [[KLinePainterView alloc] initWithFrame:self.bounds
-//                                                         datas:_datas
-//                                                       scrollX:_scrollX
-//                                                        isLine:_isLine
-//                                                        scaleX:_scaleX
-//                                                   isLongPress:_isLongPress
-//                                                     mainState:_mainState
-//                                                secondaryState:_secondaryState
-//                                              selectedDuration:_selectedDuration]; // Use the correct initializer
-//         [self addSubview:_painterView];
-//         __weak typeof(self) weakSelf = self;
-//         _painterView.showInfoBlock = ^(KLineModel * _Nonnull model, BOOL isLeft) {
-//             weakSelf.infoView.model = model;
-//             [weakSelf addSubview:weakSelf.infoView];
-//             CGFloat padding = 5;
-//             if (isLeft) {
-//                 weakSelf.infoView.frame = CGRectMake(padding, 30, weakSelf.infoView.frame.size.width, weakSelf.infoView.frame.size.height);
-//             } else {
-//                 weakSelf.infoView.frame = CGRectMake(weakSelf.frame.size.width - weakSelf.infoView.frame.size.width - padding, 30, weakSelf.infoView.frame.size.width, weakSelf.infoView.frame.size.height);
-//             }
-//         };
-
-//         // Add gesture recognizers
-//         UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(dragKlineEvent:)];
-//         UILongPressGestureRecognizer *longGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressKlineEvent:)];
-//         UIPinchGestureRecognizer *pinGesture = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(secalXEvent:)];
-//         UITapGestureRecognizer *tapPress = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapPressKlineEvent:)];
-        
-//         [_painterView addGestureRecognizer:panGesture];
-//         [_painterView addGestureRecognizer:longGesture];
-//         [_painterView addGestureRecognizer:pinGesture];
-//         [_painterView addGestureRecognizer:tapPress];
-//     }
-    
-//     return self;
-// }
 - (instancetype)initWithFrame:(CGRect)frame selectedDuration:(NSString *)selectedDuration {
     self = [super initWithFrame:frame];
    
@@ -328,6 +274,7 @@
     }
 }
 
+
 -(void)secalXEvent:(UIPinchGestureRecognizer *)gesture {
     switch (gesture.state) {
         case UIGestureRecognizerStateBegan:
@@ -340,6 +287,11 @@
         case UIGestureRecognizerStateEnded: {
             _isScale = false;
             self.lastscaleX = _scaleX;
+            // Check if fully zoomed out to reset to initial state
+            if ([self.selectedDuration isEqualToString:@"1D"] && self.scaleX <= 0.2) {
+                self.scaleX = -0.02;
+                [self.painterView setNeedsDisplay];
+            }
         }
         default:
             break;
