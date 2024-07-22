@@ -30,7 +30,7 @@
 }
 
 - (void)initChartView {
-    _chartView = [[KLineChartView alloc] initWithFrame:self.bounds selectedDuration:_selectedDuration];
+    _chartView = [[KLineChartView alloc] initWithFrame:self.bounds selectedDuration:_selectedDuration scale:_scale.floatValue]; // Pass scale to init
     _chartView.showKDJ = _showKDJ;
     _chartView.showMACD = _showMACD;
     _chartView.showRSI = _showRSI;

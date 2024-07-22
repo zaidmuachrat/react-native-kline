@@ -37,7 +37,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL showBOLLText;
 
 - (void) setMainBackgroundColor:(NSString *)mainBackgroundColor;
-- (instancetype)initWithFrame:(CGRect)frame selectedDuration:(NSString *)selectedDuration;
+- (instancetype)initWithFrame:(CGRect)frame selectedDuration:(NSString *)selectedDuration scale:(CGFloat)scale; // Update method signature
+
 
 @end
 

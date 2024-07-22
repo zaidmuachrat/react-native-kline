@@ -18,6 +18,7 @@
 @property(nonatomic,strong) CADisplayLink *displayLink;
 @property(nonatomic,assign) BOOL isScale;
 @property(nonatomic,assign) CGFloat lastscaleX;
+@property(nonatomic, assign) CGFloat initialScale; 
 
 @end
 
@@ -25,7 +26,6 @@
 
 @synthesize delegate = _delegate;
 @synthesize selectedDuration = _selectedDuration;//added by zaid
-
 - (void)setSelectedDuration:(NSString *)selectedDuration {
     _selectedDuration = selectedDuration;
     self.painterView.selectedDuration = selectedDuration; // Pass to painterView
@@ -124,13 +124,13 @@
     self.painterView.showRSI = showRSI;
 }
 
-- (instancetype)initWithFrame:(CGRect)frame selectedDuration:(NSString *)selectedDuration {
+- (instancetype)initWithFrame:(CGRect)frame selectedDuration:(NSString *)selectedDuration scale:(CGFloat)scale {
     self = [super initWithFrame:frame];
-   
     if (self) {
-        _selectedDuration = selectedDuration; // Set the selected duration
+    _selectedDuration = selectedDuration; // Set the selected duration
+     _initialScale = scale;
        if ([self.selectedDuration isEqualToString:@"1D"]) {
-            _scaleX = -0.02;
+            _scaleX = scale;
         }
        else if ([self.selectedDuration isEqualToString:@"1M" ] || [self.selectedDuration isEqualToString:@"5M"]|| [self.selectedDuration isEqualToString:@"10M"]|| [self.selectedDuration isEqualToString:@"30M"]|| [self.selectedDuration isEqualToString:@"1H"]) {
             _scaleX = 2.0;
@@ -207,12 +207,12 @@
 -(void)initIndicatirs {
     CGFloat dataLength = ((CGFloat)_datas.count) * (ChartStyle_candleWidth * _scaleX + ChartStyle_canldeMargin) - ChartStyle_canldeMargin;
     _maxScroll = dataLength - self.frame.size.width;
-
     CGFloat dataScroll = self.frame.size.width - dataLength;
     CGFloat normalminScroll = -self.frame.size.width / 10.0 + (ChartStyle_candleWidth * _scaleX) / (CGFloat)2.0;
     self.minScroll = MIN(normalminScroll, -dataScroll);
     self.scrollX = [self clamp:_scrollX min:_minScroll max:_maxScroll];
     self.lastScrollX = self.scrollX;
+    
 }
 
 -(void)dragKlineEvent:(UIPanGestureRecognizer *)gesture {
@@ -282,22 +282,27 @@
             break;
         case UIGestureRecognizerStateChanged: {
             _isScale = true;
-            self.scaleX = [self clamp:self.lastscaleX * gesture.scale min:0.2 max:3];
+            // Clamp scale value ensuring the minimum is always positive for gesture handling
+            self.scaleX = [self clamp:self.lastscaleX * gesture.scale min:fabs(self.initialScale) max:3];
+            self.painterView.scaleX = self.scaleX; // Ensure painterView updates
+            [self.painterView setNeedsDisplay]; // Ensure the view updates
+            break;
         }
         case UIGestureRecognizerStateEnded: {
             _isScale = false;
             self.lastscaleX = _scaleX;
             // Check if fully zoomed out to reset to initial state
-            if ([self.selectedDuration isEqualToString:@"1D"] && self.scaleX <= 0.2) {
-                self.scaleX = -0.02;
+            if ([self.selectedDuration isEqualToString:@"1D"] && self.scaleX <= fabs(self.initialScale)) {
+                self.scaleX = self.initialScale; // Reset to the exact initial scale
+                self.painterView.scaleX = self.scaleX;
                 [self.painterView setNeedsDisplay];
             }
+            break;
         }
         default:
             break;
     }
 }
-
 -(void)refreshEvent:(CADisplayLink *)displaylink {
     CGFloat space = 100;
     if (self.speedX < 0) {

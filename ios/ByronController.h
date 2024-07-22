@@ -128,6 +128,8 @@
 @property (nonatomic, assign) BOOL showBOLL;
 @property (nonatomic, assign) BOOL showBOLLText;
 @property (nonatomic, assign) BOOL showWR;
+@property (nonatomic, strong) NSNumber *scale; 
+
 @property(nonatomic,strong) KLineChartView *chartView;
 
 @end
