@@ -1,11 +1,3 @@
-//
-//  VolChartRenderer.m
-//  KLine-Chart-OC
-//
-//  Created by 何俊松 on 2020/3/10.
-//  Copyright © 2020 hjs. All rights reserved.
-//
-
 #import "VolChartRenderer.h"
 #import "ChartStyle.h"
 #import "NSString+Rect.h"
@@ -25,6 +17,7 @@
     CGContextDrawPath(context, kCGPathStroke);
     
 }
+
 - (void)drawChart:(CGContextRef)context lastPoit:(KLineModel *)lastPoint curPoint:(KLineModel *)curPoint curX:(CGFloat)curX {
     [self drawVolChat:context curPoint:curPoint curX:curX];
     if (self.showVMA) { // Conditionally draw the VMA lines
@@ -41,12 +34,15 @@
 
 - (void)drawVolChat:(CGContextRef)context curPoint:(KLineModel *)curPoint curX:(CGFloat)curX {
     CGFloat top = [self getY:curPoint.vol];
-    CGContextSetLineWidth(context, self.candleWidth);
-    if(curPoint.close > curPoint.open) {
+    CGFloat barWidth = self.candleWidth > 1.0 ? self.candleWidth : 1.0; // Ensure a minimum bar width
+    CGContextSetLineWidth(context, barWidth);
+
+    if (curPoint.close > curPoint.open) {
         CGContextSetStrokeColorWithColor(context, ChartColors_upColor.CGColor);
     } else {
         CGContextSetStrokeColorWithColor(context, ChartColors_dnColor.CGColor);
     }
+    
     CGContextMoveToPoint(context, curX, CGRectGetMaxY(self.chartRect));
     CGContextAddLineToPoint(context, curX, top);
     CGContextDrawPath(context, kCGPathStroke);
@@ -64,7 +60,7 @@
         NSAttributedString *attr = [[NSAttributedString alloc] initWithString:str attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:ChartStyle_defaultTextSize],NSForegroundColorAttributeName: ChartColors_ma5Color}];
         [topAttributeText appendAttributedString:attr];
     }
-   {
+    {
         NSString *str = [NSString stringWithFormat:@"VMA10:%@   ",[self volFormat:curPoint.MA10Volume]];
         NSAttributedString *attr = [[NSAttributedString alloc] initWithString:str attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:ChartStyle_defaultTextSize],NSForegroundColorAttributeName: ChartColors_ma10Color}];
         [topAttributeText appendAttributedString:attr];
