@@ -133,11 +133,11 @@
             _scaleX = scale;
         }
        else if ([self.selectedDuration isEqualToString:@"1M" ] || [self.selectedDuration isEqualToString:@"5M"]|| [self.selectedDuration isEqualToString:@"10M"]|| [self.selectedDuration isEqualToString:@"30M"]|| [self.selectedDuration isEqualToString:@"1H"]) {
-            _scaleX = 2.0;
+            _scaleX =scale;
         } else if ([_selectedDuration isEqualToString:@"3M"]) {
-            _scaleX = 1.5;
+            _scaleX = scale;
         } else {
-            _scaleX = 0.2;
+            _scaleX = scale;
         }
 
        
