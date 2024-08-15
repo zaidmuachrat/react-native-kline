@@ -95,7 +95,7 @@ static CGFloat ChartStyle_hCrossWidth = 0.5;
     //网格
 static CGFloat ChartStyle_gridRows = 3; //changed by Zaid
    
-static CGFloat ChartStyle_gridColumns = 4; //changed by Zaid
+static CGFloat ChartStyle_gridColumns = 5; //changed by Zaid
 
 static CGFloat ChartStyle_topPadding = 30.0;
    

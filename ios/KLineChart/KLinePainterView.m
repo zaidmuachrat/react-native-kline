@@ -51,7 +51,6 @@
 @property(nonatomic, assign) CGFloat mWRMaxValue; // WR Max Value
 @property(nonatomic, assign) CGFloat mWRMinValue; // WR Min Value
 @property(nonatomic,assign) CGFloat candleWidth;
-
 //var fromat: String = "yyyy-MM-dd"
 @property(nonatomic,copy) NSString *fromat;
 
@@ -151,6 +150,7 @@
         self.candleWidth = ChartStyle_candleWidth * self.scaleX;
         self.selectedDuration = selectedDuration; // Set the selected duration
     }
+   
     return self;
 }
 
@@ -454,37 +454,188 @@
     }
 }
 
+//     - (void)drawDate:(CGContextRef)context {
+//     CGFloat cloumSpace = self.frame.size.width / (CGFloat)ChartStyle_gridColumns;
 
+//     // Determine when to show only "10:00" and "15:20" for 1D duration
+//     if ([self.selectedDuration isEqualToString:@"1D"]) {
+//         CGFloat thresholdScale = [self calculateThresholdScaleFor1D];
+//         if (_scaleX <= fabs(thresholdScale) && self.datas.count <= 360) {
+//             NSString *saudiStartTime = @"10:00";
+//             NSString *saudiEndTime = @"15:20";
+            
+//             // Define a date formatter for the Saudi time
+//             NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+//             [dateFormatter setDateFormat:@"HH:mm"];
+//             [dateFormatter setTimeZone:[NSTimeZone timeZoneWithName:@"Asia/Riyadh"]];
+
+//             // Parse the Saudi times
+//             NSDate *startTimeDate = [dateFormatter dateFromString:saudiStartTime];
+//             NSDate *endTimeDate = [dateFormatter dateFromString:saudiEndTime];
+
+//             // Convert to local time zone
+//             [dateFormatter setTimeZone:[NSTimeZone localTimeZone]];
+//             NSString *localStartTime = [dateFormatter stringFromDate:startTimeDate];
+//             NSString *localEndTime = [dateFormatter stringFromDate:endTimeDate];
+
+//             // Display the local times
+//             CGRect startRect = [localStartTime getRectWithFontSize:ChartStyle_bottomDatefontSize];
+//             CGFloat y = CGRectGetMinY(self.dateRect) + (ChartStyle_bottomDateHigh - startRect.size.height) / 2;
+
+//             [self.mainRenderer drawText:localStartTime atPoint:CGPointMake(0, y) fontSize:ChartStyle_bottomDatefontSize textColor:ChartColors_bottomDateTextColor];
+
+//             CGRect endRect = [localEndTime getRectWithFontSize:ChartStyle_bottomDatefontSize];
+//             [self.mainRenderer drawText:localEndTime atPoint:CGPointMake(self.frame.size.width - endRect.size.width, y) fontSize:ChartStyle_bottomDatefontSize textColor:ChartColors_bottomDateTextColor];
+
+//             return;
+//         }
+//     }
+
+//     // Default behavior for other durations and when zoomed in
+//     for (int i = 0; i < ChartStyle_gridColumns; i++) {
+//         NSUInteger index = [self calculateIndexWithSelectX:cloumSpace * (CGFloat)i];
+//         if ([self outRangeIndex:index]) { continue; }
+//         KLineModel *data = self.datas[index];
+//         NSString *dataStr = [self calculateDateText:data.id];
+//         CGRect rect = [dataStr getRectWithFontSize:ChartStyle_bottomDatefontSize];
+//         CGFloat y = CGRectGetMinY(self.dateRect) + (ChartStyle_bottomDateHigh - rect.size.height) / 2;
+//         [self.mainRenderer drawText:dataStr atPoint:CGPointMake(cloumSpace * i - rect.size.width / 2, y) fontSize:ChartStyle_bottomDatefontSize textColor:ChartColors_bottomDateTextColor];
+//     }
+// }
 - (void)drawDate:(CGContextRef)context {
     CGFloat cloumSpace = self.frame.size.width / (CGFloat)ChartStyle_gridColumns;
-    
-    if ([self.selectedDuration isEqualToString:@"1D"] && _scaleX <= 0.02) {
-        // Show only "10:00" and "15:00" for 1D duration when fully zoomed out
-        NSString *startTime = @"10:00";
-        NSString *endTime = @"15:00";
-        
-        CGRect startRect = [startTime getRectWithFontSize:ChartStyle_bottomDatefontSize];
-        CGFloat y = CGRectGetMinY(self.dateRect) + (ChartStyle_bottomDateHigh - startRect.size.height) / 2;
-        
-        [self.mainRenderer drawText:startTime atPoint:CGPointMake(0, y) fontSize:ChartStyle_bottomDatefontSize textColor:ChartColors_bottomDateTextColor];
-        
-        CGRect endRect = [endTime getRectWithFontSize:ChartStyle_bottomDatefontSize];
-        [self.mainRenderer drawText:endTime atPoint:CGPointMake(self.frame.size.width - endRect.size.width, y) fontSize:ChartStyle_bottomDatefontSize textColor:ChartColors_bottomDateTextColor];
-    } else {
-        // Default behavior for other durations and when zoomed in
-        for (int i = 0; i < ChartStyle_gridColumns; i++) {
-            NSUInteger index = [self calculateIndexWithSelectX: cloumSpace * (CGFloat)i];
-            if([self outRangeIndex:index]) { continue; }
-            KLineModel *data = self.datas[index];
-            NSString *dataStr = [self calculateDateText:data.id];
-            CGRect rect = [dataStr getRectWithFontSize:ChartStyle_bottomDatefontSize];
-            CGFloat y = CGRectGetMinY(self.dateRect) + (ChartStyle_bottomDateHigh - rect.size.height) / 2;
-            [self.mainRenderer drawText:dataStr atPoint:CGPointMake(cloumSpace * i - rect.size.width / 2, y) fontSize:ChartStyle_bottomDatefontSize textColor:ChartColors_bottomDateTextColor];
+
+    // Get current date and time in Saudi timezone
+    NSDate *now = [NSDate date];
+    NSTimeZone *saudiTimeZone = [NSTimeZone timeZoneWithName:@"Asia/Riyadh"];
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setTimeZone:saudiTimeZone];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm"];
+
+    // Get current components in Saudi timezone
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    [calendar setTimeZone:saudiTimeZone];
+    NSDateComponents *currentComponents = [calendar components:(NSCalendarUnitWeekday | NSCalendarUnitHour | NSCalendarUnitMinute) fromDate:now];
+
+    NSInteger currentHour = currentComponents.hour;
+    NSInteger currentMinute = currentComponents.minute;
+    NSInteger currentWeekday = currentComponents.weekday;
+
+    // Check if today is between Sunday (1) and Thursday (5)
+    BOOL isWeekday = (currentWeekday >= 1 && currentWeekday <= 5);
+    BOOL isMarketTime = (currentHour > 10 || (currentHour == 10 && currentMinute >= 0)) && 
+                        (currentHour < 15 || (currentHour == 15 && currentMinute <= 20));
+
+    // Determine when to show only "10:00" and "15:20" for 1D duration
+    if ([self.selectedDuration isEqualToString:@"1D"] && isWeekday && isMarketTime) {
+        CGFloat thresholdScale = [self calculateThresholdScaleFor1D];
+        if (_scaleX <= fabs(thresholdScale) && self.datas.count <= 360) {
+            NSString *saudiStartTime = @"10:00";
+            NSString *saudiEndTime = @"15:20";
+
+            // Define a date formatter for the Saudi time
+            NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+            [dateFormatter setDateFormat:@"HH:mm"];
+            [dateFormatter setTimeZone:[NSTimeZone timeZoneWithName:@"Asia/Riyadh"]];
+
+            // Parse the Saudi times
+            NSDate *startTimeDate = [dateFormatter dateFromString:saudiStartTime];
+            NSDate *endTimeDate = [dateFormatter dateFromString:saudiEndTime];
+
+            // Convert to local time zone
+            [dateFormatter setTimeZone:[NSTimeZone localTimeZone]];
+            NSString *localStartTime = [dateFormatter stringFromDate:startTimeDate];
+            NSString *localEndTime = [dateFormatter stringFromDate:endTimeDate];
+
+            // Display the local times
+            CGRect startRect = [localStartTime getRectWithFontSize:ChartStyle_bottomDatefontSize];
+            CGFloat y = CGRectGetMinY(self.dateRect) + (ChartStyle_bottomDateHigh - startRect.size.height) / 2;
+
+            [self.mainRenderer drawText:localStartTime atPoint:CGPointMake(0, y) fontSize:ChartStyle_bottomDatefontSize textColor:ChartColors_bottomDateTextColor];
+
+            CGRect endRect = [localEndTime getRectWithFontSize:ChartStyle_bottomDatefontSize];
+            [self.mainRenderer drawText:localEndTime atPoint:CGPointMake(self.frame.size.width - endRect.size.width, y) fontSize:ChartStyle_bottomDatefontSize textColor:ChartColors_bottomDateTextColor];
+
+            return;
         }
+    }
+
+    // Default behavior for other durations and when zoomed in
+    for (int i = 0; i < ChartStyle_gridColumns; i++) {
+        NSUInteger index = [self calculateIndexWithSelectX:cloumSpace * (CGFloat)i];
+        if ([self outRangeIndex:index]) { continue; }
+        KLineModel *data = self.datas[index];
+        NSString *dataStr = [self calculateDateText:data.id];
+        CGRect rect = [dataStr getRectWithFontSize:ChartStyle_bottomDatefontSize];
+        CGFloat y = CGRectGetMinY(self.dateRect) + (ChartStyle_bottomDateHigh - rect.size.height) / 2;
+        [self.mainRenderer drawText:dataStr atPoint:CGPointMake(cloumSpace * i - rect.size.width / 2, y) fontSize:ChartStyle_bottomDatefontSize textColor:ChartColors_bottomDateTextColor];
     }
 }
 
-
+- (CGFloat)calculateThresholdScaleFor1D {
+    // Calculate the threshold scale for 1D based on the data count
+    if (self.datas.count >= 360) {
+        return -0.05;
+    } else if (self.datas.count >= 350) {
+        return -0.045;
+    } else if (self.datas.count >= 330) {
+        return -0.04;
+    } else if (self.datas.count >= 300) {
+        return -0.03;
+    } else if (self.datas.count >= 280) {
+        return -0.02;
+    } else if (self.datas.count >= 250) {
+        return -0.001;
+    } else if (self.datas.count > 240) {
+        return 0.01;
+    } else if (self.datas.count > 230) {
+        return 0.02;
+    } else if (self.datas.count > 220) {
+        return 0.03;
+    } else if (self.datas.count > 210) {
+        return 0.04;
+    } else if (self.datas.count > 200) {
+        return 0.05;
+    } else if (self.datas.count > 190) {
+        return 0.06;
+    } else if (self.datas.count > 180) {
+        return 0.07;
+    } else if (self.datas.count > 170) {
+        return 0.09;
+    } else if (self.datas.count > 160) {
+        return 0.1;
+    } else if (self.datas.count > 150) {
+        return 0.12;
+    } else if (self.datas.count > 140) {
+        return 0.15;
+    } else if (self.datas.count > 130) {
+        return 0.17;
+    } else if (self.datas.count > 120) {
+        return 0.2;
+    } else if (self.datas.count > 110) {
+        return 0.23;
+    } else if (self.datas.count > 100) {
+        return 0.26;
+    } else if (self.datas.count > 90) {
+        return 0.32;
+    } else if (self.datas.count > 80) {
+        return 0.38;
+    } else if (self.datas.count > 70) {
+        return 0.45;
+    } else if (self.datas.count > 60) {
+        return 0.54;
+    } else if (self.datas.count > 50) {
+        return 0.68;
+    } else if (self.datas.count > 40) {
+        return 0.92;
+    } else if (self.datas.count > 30) {
+        return 1.3;
+    } else if (self.datas.count > 20) {
+        return 2.0;
+    } else {
+        return 4.0;
+    }
+}
 -(void)drawMaxAndMin:(CGContextRef)context {
     if(_isLine) { return; }
     NSNumber *fixedPrice = [KLineStateManager manager].pricePrecision;
