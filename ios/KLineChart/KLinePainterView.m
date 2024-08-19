@@ -454,54 +454,6 @@
     }
 }
 
-//     - (void)drawDate:(CGContextRef)context {
-//     CGFloat cloumSpace = self.frame.size.width / (CGFloat)ChartStyle_gridColumns;
-
-//     // Determine when to show only "10:00" and "15:20" for 1D duration
-//     if ([self.selectedDuration isEqualToString:@"1D"]) {
-//         CGFloat thresholdScale = [self calculateThresholdScaleFor1D];
-//         if (_scaleX <= fabs(thresholdScale) && self.datas.count <= 360) {
-//             NSString *saudiStartTime = @"10:00";
-//             NSString *saudiEndTime = @"15:20";
-            
-//             // Define a date formatter for the Saudi time
-//             NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-//             [dateFormatter setDateFormat:@"HH:mm"];
-//             [dateFormatter setTimeZone:[NSTimeZone timeZoneWithName:@"Asia/Riyadh"]];
-
-//             // Parse the Saudi times
-//             NSDate *startTimeDate = [dateFormatter dateFromString:saudiStartTime];
-//             NSDate *endTimeDate = [dateFormatter dateFromString:saudiEndTime];
-
-//             // Convert to local time zone
-//             [dateFormatter setTimeZone:[NSTimeZone localTimeZone]];
-//             NSString *localStartTime = [dateFormatter stringFromDate:startTimeDate];
-//             NSString *localEndTime = [dateFormatter stringFromDate:endTimeDate];
-
-//             // Display the local times
-//             CGRect startRect = [localStartTime getRectWithFontSize:ChartStyle_bottomDatefontSize];
-//             CGFloat y = CGRectGetMinY(self.dateRect) + (ChartStyle_bottomDateHigh - startRect.size.height) / 2;
-
-//             [self.mainRenderer drawText:localStartTime atPoint:CGPointMake(0, y) fontSize:ChartStyle_bottomDatefontSize textColor:ChartColors_bottomDateTextColor];
-
-//             CGRect endRect = [localEndTime getRectWithFontSize:ChartStyle_bottomDatefontSize];
-//             [self.mainRenderer drawText:localEndTime atPoint:CGPointMake(self.frame.size.width - endRect.size.width, y) fontSize:ChartStyle_bottomDatefontSize textColor:ChartColors_bottomDateTextColor];
-
-//             return;
-//         }
-//     }
-
-//     // Default behavior for other durations and when zoomed in
-//     for (int i = 0; i < ChartStyle_gridColumns; i++) {
-//         NSUInteger index = [self calculateIndexWithSelectX:cloumSpace * (CGFloat)i];
-//         if ([self outRangeIndex:index]) { continue; }
-//         KLineModel *data = self.datas[index];
-//         NSString *dataStr = [self calculateDateText:data.id];
-//         CGRect rect = [dataStr getRectWithFontSize:ChartStyle_bottomDatefontSize];
-//         CGFloat y = CGRectGetMinY(self.dateRect) + (ChartStyle_bottomDateHigh - rect.size.height) / 2;
-//         [self.mainRenderer drawText:dataStr atPoint:CGPointMake(cloumSpace * i - rect.size.width / 2, y) fontSize:ChartStyle_bottomDatefontSize textColor:ChartColors_bottomDateTextColor];
-//     }
-// }
 - (void)drawDate:(CGContextRef)context {
     CGFloat cloumSpace = self.frame.size.width / (CGFloat)ChartStyle_gridColumns;
 
@@ -529,7 +481,7 @@
     // Determine when to show only "10:00" and "15:20" for 1D duration
     if ([self.selectedDuration isEqualToString:@"1D"] && isWeekday && isMarketTime) {
         CGFloat thresholdScale = [self calculateThresholdScaleFor1D];
-        if (_scaleX <= fabs(thresholdScale) && self.datas.count <= 360) {
+        if (_scaleX <= fabs(thresholdScale) && self.datas.count <= 320) {
             NSString *saudiStartTime = @"10:00";
             NSString *saudiEndTime = @"15:20";
 

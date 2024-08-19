@@ -129,16 +129,15 @@
     if (self) {
     _selectedDuration = selectedDuration; // Set the selected duration
      _initialScale = scale;
-       if ([self.selectedDuration isEqualToString:@"1D"]) {
+       
             _scaleX = scale;
-        }
-       else if ([self.selectedDuration isEqualToString:@"1M" ] || [self.selectedDuration isEqualToString:@"5M"]|| [self.selectedDuration isEqualToString:@"10M"]|| [self.selectedDuration isEqualToString:@"30M"]|| [self.selectedDuration isEqualToString:@"1H"]) {
-            _scaleX =scale;
-        } else if ([_selectedDuration isEqualToString:@"3M"]) {
-            _scaleX = scale;
-        } else {
-            _scaleX = scale;
-        }
+    //    else if ([self.selectedDuration isEqualToString:@"1M" ] || [self.selectedDuration isEqualToString:@"5M"]|| [self.selectedDuration isEqualToString:@"10M"]|| [self.selectedDuration isEqualToString:@"30M"]|| [self.selectedDuration isEqualToString:@"1H"]) {
+    //         _scaleX =scale;
+    //     } else if ([_selectedDuration isEqualToString:@"3M"]) {
+    //         _scaleX = scale;
+    //     } else {
+    //         _scaleX = scale;
+    //     }
 
        
         _mainState = MainStateMA;
@@ -292,11 +291,15 @@
             _isScale = false;
             self.lastscaleX = _scaleX;
             // Check if fully zoomed out to reset to initial state
-            if ([self.selectedDuration isEqualToString:@"1D"] && self.scaleX <= fabs(self.initialScale)) {
-                self.scaleX = self.initialScale; // Reset to the exact initial scale
+           if ([self.selectedDuration isEqualToString:@"1D"] && self.scaleX <= fabs(self.initialScale)) {
+
+                 // Log the values of initialScale and scaleX
+                  NSLog(@"initialScale: %f, scaleX: %f", self.initialScale, self.scaleX);
+    
+             self.scaleX = self.initialScale; // Reset to the exact initial scale
                 self.painterView.scaleX = self.scaleX;
-                [self.painterView setNeedsDisplay];
-            }
+                 [self.painterView setNeedsDisplay];
+        }   
             break;
         }
         default:

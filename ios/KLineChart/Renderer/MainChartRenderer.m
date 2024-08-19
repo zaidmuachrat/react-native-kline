@@ -25,8 +25,15 @@
         self.contentPadding = 20;
         self.isLine = isLine;
         self.state = state;
+        
         CGFloat diff = maxValue - minValue;
-        CGFloat newscaly = (chartRect.size.height - _contentPadding)/ diff;
+        
+        // Prevent division by zero or infinity
+        if (diff == 0) {
+            diff = 1; // Set a small default value to avoid infinity
+        }
+        
+        CGFloat newscaly = (chartRect.size.height - _contentPadding) / diff;
         CGFloat newDiff = chartRect.size.height / newscaly;
         CGFloat value = (newDiff - diff) / 2;
         if(newDiff > diff) {
@@ -83,33 +90,35 @@
     CGFloat y1 = [self getY:curValue];
     CGFloat x2 = curX + self.candleWidth + ChartStyle_canldeMargin;
     CGFloat y2 = [self getY:lastValue];
+
+
     CGContextSetLineWidth(context, 1.5);
     CGContextSetStrokeColorWithColor(context, [UIColor colorWithHexString:@"#139E77"].CGColor);
     CGContextMoveToPoint(context, x1, y1);
-    CGContextAddLineToPoint(context, x2, y2); // Change to add straight line
+    CGContextAddLineToPoint(context, x2, y2);
     CGContextDrawPath(context, kCGPathFillStroke);
-    
+
     CGMutablePathRef path = CGPathCreateMutable();
     CGPathMoveToPoint(path, &CGAffineTransformIdentity, x1, CGRectGetMaxY(self.chartRect));
     CGPathAddLineToPoint(path, &CGAffineTransformIdentity, x1, y1);
-    CGPathAddLineToPoint(path, &CGAffineTransformIdentity, x2, y2); // Change to add straight line
-    CGPathAddLineToPoint(path,  &CGAffineTransformIdentity, x2, CGRectGetMaxY(self.chartRect));
+    CGPathAddLineToPoint(path, &CGAffineTransformIdentity, x2, y2);
+    CGPathAddLineToPoint(path, &CGAffineTransformIdentity, x2, CGRectGetMaxY(self.chartRect));
     CGPathCloseSubpath(path);
     CGContextAddPath(context, path);
-    
+
     CGContextClip(context);
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    CGFloat locations[] = {0, 0.9, 1}; // Added an additional stop for the white gradient
+    CGFloat locations[] = {0, 0.9, 1};
     NSArray *colors = @[(__bridge id)[UIColor colorWithRed:0xCB/255.0 green:0xF3/255.0 blue:0xEA/255.0 alpha:1.0].CGColor,
                         (__bridge id)[UIColor colorWithRed:0x77/255.0 green:0xF3/255.0 blue:0xD1/255.0 alpha:0.0].CGColor,
-                        (__bridge id)[UIColor colorWithWhite:1.0 alpha:0.2].CGColor]; // Slight white gradient at the bottom
+                        (__bridge id)[UIColor colorWithWhite:1.0 alpha:0.2].CGColor];
     CGGradientRef gradient = CGGradientCreateWithColors(colorSpace, (CFArrayRef) colors, locations);
     CGColorSpaceRelease(colorSpace);
     CGPoint start = CGPointMake((x1 + x2) / 2, CGRectGetMinY(self.chartRect));
     CGPoint end = CGPointMake((x1 + x2) / 2, CGRectGetMaxY(self.chartRect));
     CGContextDrawLinearGradient(context, gradient, start, end, 0);
     CGContextResetClip(context);
-    
+
     CGColorSpaceRelease(colorSpace);
     CGPathRelease(path);
     CGGradientRelease(gradient);
@@ -265,7 +274,10 @@
 
 
 - (CGFloat)getY:(CGFloat)value {
-    return self.scaleY * (self.maxValue - value) + CGRectGetMinY(self.chartRect);
+    
+    CGFloat y = self.scaleY * (self.maxValue - value) + CGRectGetMinY(self.chartRect);
+    
+    return y;
 }
 
 @end
