@@ -67,9 +67,10 @@
                 [self drawLine:context lastValue:lastPoint.rsi curValue:curPoint.rsi curX:curX color:ChartColors_rsiColor];
             }
         }
-    }  else if (_state == SecondaryStateWR) {
+    }  else  if(_state == SecondaryStateWR) {
         if (lastPoint != nil) {
             if (curPoint.r != CGFLOAT_MAX && lastPoint.r != CGFLOAT_MAX) {
+                // Log the values being drawn for debugging
                 [self drawLine:context lastValue:lastPoint.r curValue:curPoint.r curX:curX color:ChartColors_wrColor];
             }
         }
