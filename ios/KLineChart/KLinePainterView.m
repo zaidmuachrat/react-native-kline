@@ -810,24 +810,7 @@
     } else if (point.close < self.mMainMinValue) {
         y = [self.mainRenderer getY:self.mMainMinValue];
     }
-    if((-_scrollX - rect.size.width) > 0) {
-        CGContextSetStrokeColorWithColor(context, ChartColors_realTimeLongLineColor.CGColor);
-        CGContextSetLineWidth(context, 0.5);
-        CGFloat locations[] = {5,5};
-        CGContextSetLineDash(context, 0, locations, 2);
-        CGContextMoveToPoint(context,self.frame.size.width + _scrollX, y);
-        CGContextAddLineToPoint(context, self.frame.size.width, y);
-        CGContextDrawPath(context, kCGPathStroke);
-        CGContextAddRect(context, CGRectMake(self.frame.size.width - rect.size.width, y - rect.size.height / 2, rect.size.width, rect.size.height));
-        CGContextSetFillColorWithColor(context, [UIColor colorWithHexString:_mainBackgroundColor].CGColor);
-        CGContextDrawPath(context, kCGPathFill);
-        [self.mainRenderer drawText:text atPoint:CGPointMake(self.frame.size.width - rect.size.width, y - rect.size.height / 2) fontSize:fontSize textColor:ChartColors_reightTextColor];
-        if(_isLine) {
-            CGContextSetFillColorWithColor(context, [UIColor whiteColor].CGColor);
-            CGContextAddArc(context, self.frame.size.width + _scrollX - _candleWidth / 2, y, 2, 0, M_PI_2, true);
-            CGContextDrawPath(context, kCGPathFill);
-        }
-    } else {
+   
         CGContextSetStrokeColorWithColor(context, ChartColors_realTimeLongLineColor.CGColor);
         CGContextSetLineWidth(context, 0.5);
         CGFloat locations[] = {5,5};
@@ -870,7 +853,6 @@
         CGContextClosePath(context);
         CGContextDrawPath(context, kCGPathFill);
         [self.mainRenderer drawText:text atPoint:CGPointMake(curX - rect.size.width / 2 - 4, y - rect.size.height / 2) fontSize:fontSize textColor:ChartColors_reightTextColor];
-    }
 }
 
 -(NSUInteger)calculateIndexWithSelectX:(CGFloat)selectX {
