@@ -67,14 +67,14 @@ public class MainRender extends BaseRender {
         upLinePaint.setAntiAlias(true);
         downLinePaint.setStyle(Paint.Style.STROKE);
         downLinePaint.setAntiAlias(true);
-        marketInfoText[0] = ("时间   ");
-        marketInfoText[1] = ("开     ");
-        marketInfoText[2] = ("高     ");
-        marketInfoText[3] = ("低     ");
-        marketInfoText[4] = ("收     ");
-        marketInfoText[5] = ("涨跌额  ");
-        marketInfoText[6] = ("涨跌幅  ");
-        marketInfoText[7] = ("成交量  ");
+        marketInfoText[0] = ("time   ");
+        marketInfoText[1] = ("open     ");
+        marketInfoText[2] = ("high     ");
+        marketInfoText[3] = ("low     ");
+        marketInfoText[4] = ("close     ");
+        marketInfoText[5] = ("change  ");
+        marketInfoText[6] = ("change%  ");
+        marketInfoText[7] = ("vol  ");
 
         indexMa1 = String.format(context.getString(R.string.k_index_ma_formater), Constants.K_MA_NUMBER_1);
         indexMa2 = String.format(context.getString(R.string.k_index_ma_formater), Constants.K_MA_NUMBER_2);

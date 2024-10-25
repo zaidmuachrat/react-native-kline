@@ -65,7 +65,7 @@
         <attr format="dimension" name="priceLabelInLineTextSize"/>
         <attr format="color" name="priceLabelInLineTextColor"/>
 
-        <!--cross line -->
+        
         <attr format="dimension" name="selectedXLineWidth"/>
         <attr format="dimension" name="selectedYLineWidth"/>
         <attr format="color" name="selectedXLineColor"/>
@@ -90,13 +90,13 @@
         <attr format="color" name="selectedXLabelTextColor"/>
         <attr format="dimension" name="selectedXLabelTextSize"/>
         <attr format="reference" name="selectedInfoLabels"/>
-        <!-- background -->
+        
         <attr format="boolean" name="closeFollowTouch"/>
         <attr format="dimension" name="yLabelMarginBorder"/>
         <attr format="color" name="backgroundFillTopColor"/>
         <attr format="color" name="backgroundFillBottomColor"/>
 
-        <!--time line-->
+        
         <attr format="color" name="timeLineColor"/>
         <attr format="color" name="timeLineFillTopColor"/>
         <attr format="color" name="timeLineFillBottomColor"/>
@@ -104,7 +104,7 @@
         <attr format="integer" name="timeLineEndRadius"/>
         <attr format="float" name="timeLineEndMultiply"/>
 
-        <!--公共的-->
+        
 
         <attr format="dimension" name="selectedDateBoxVerticalPadding"/>
         <attr format="dimension" name="selectedDateBoxHorizontalPadding"/>
@@ -128,7 +128,7 @@
         <attr format="reference" name="chartLogo"/>
         <attr format="color" name="limitTextColor"/>
         <attr format="dimension" name="limitTextSize"/>
-        <!--k线-->
+        
         <attr format="dimension" name="candlePaddingTop"/>
         <attr format="dimension" name="candlePaddingBottom"/>
         <attr format="dimension" name="candleWidth"/>
@@ -137,12 +137,12 @@
             <enum name="stroke" value="0"/>
             <enum name="solid" value="1"/>
         </attr>
-        <!--grid line-->
+        
         <attr format="dimension" name="gridLineWidth"/>
         <attr format="color" name="gridLineColor"/>
         <attr name="gridLineRows"/>
         <attr name="gridLineColumns"/>
-        <!--macd-->
+        
         <attr format="color" name="macdStrokeWidth"/>
         <attr format="color" name="macdIncreaseColor"/>
         <attr format="color" name="macdDecreaseColor"/>
@@ -151,31 +151,31 @@
         <attr format="color" name="deaColor"/>
         <attr format="color" name="macdColor"/>
 
-        <!--wr-->
+        
         <attr format="color" name="wr1Color"/>
         <attr format="color" name="wr2Color"/>
         <attr format="color" name="wr3Color"/>
 
-        <!--kdj-->
+        
         <attr format="color" name="kColor"/>
         <attr format="color" name="dColor"/>
         <attr format="color" name="jColor"/>
-        <!--rsi-->
+        
         <attr format="color" name="rsi1Color"/>
         <attr format="color" name="rsi2Color"/>
         <attr format="color" name="ris3Color"/>
-        <!--boll-->
+        
         <attr format="color" name="upColor"/>
         <attr format="color" name="mbColor"/>
         <attr format="color" name="dnColor"/>
-        <!--main-->
+        
         <attr format="color" name="ma1Color"/>
         <attr format="color" name="ma2Color"/>
         <attr format="color" name="ma3Color"/>
 
         <attr format="color" name="volMa1Color"/>
         <attr format="color" name="volMa2Color"/>
-        <!-- vol -->
+        
         <attr format="color" name="volLegendColor"/>
         <attr format="color" name="volLineChartColor"/>
         <attr format="dimension" name="volLegendMarginTop"/>
