@@ -86,27 +86,39 @@ public class VolumeRender extends BaseRender {
         }
     }
 
-    private void drawHistogram(Canvas canvas, float curX, float vol, float open, float close, BaseKChartView view, int position) {
+ private void drawHistogram(Canvas canvas, float curX, float vol, float open, float close, BaseKChartView view, int position) {
 
-        float top, r = volWidth / 2 * view.getScaleX();
-        int bottom = view.getVolRectBottom();
-        if (position == itemsCount - 1 && view.isAnimationLast()) {
-            top = view.getVolY(view.getLastVol());
-        } else {
-            top = view.getVolY(vol);
-        }
-        if (0 != vol && top > bottom - 2) {
-            top = bottom - 2;
-        }
-        if ((null == view.getVolChartStatus() && view.getKlineStatus().showLine()) || view.getVolChartStatus() == Status.VolChartStatus.LINE_CHART) {
-            canvas.drawRect(curX - lineVolWidth, top, curX + lineVolWidth, bottom, linePaint);
-        } else if (close >= open) {//涨
-            canvas.drawRect(curX - r, top, curX + r, bottom, increasePaint);
-        } else {
-            canvas.drawRect(curX - r, top, curX + r, bottom, decreasePaint);
-        }
-
+    // Adjust bar width based on zoom level (scale factor)
+    float zoomFactor = view.getScaleX(); // This represents the zoom level of the chart
+    float dynamicWidth = Math.max(5.0f, 10.0f * zoomFactor); // Define a base width and scale it by the zoom level
+    float top, r = volWidth / 2 * zoomFactor;  // Adjust the radius based on zoom level
+    int bottom = view.getVolRectBottom();
+    
+    if (position == itemsCount - 1 && view.isAnimationLast()) {
+        top = view.getVolY(view.getLastVol());
+    } else {
+        top = view.getVolY(vol);
     }
+    
+    if (0 != vol && top > bottom - 2) {
+        top = bottom - 2;
+    }
+
+   if ((null == view.getVolChartStatus() && view.getKlineStatus().showLine()) || 
+    view.getVolChartStatus() == Status.VolChartStatus.LINE_CHART) {
+    // For line chart, use increase or decrease paint based on the price movement
+    if (close >= open) {
+        canvas.drawRect(curX - r, top, curX + r, bottom, increasePaint);
+    } else {
+        canvas.drawRect(curX - r, top, curX + r, bottom, decreasePaint);
+    }
+} else if (close >= open) {
+    canvas.drawRect(curX - r, top, curX + r, bottom, increasePaint);
+} else {
+    canvas.drawRect(curX - r, top, curX + r, bottom, decreasePaint);
+}
+}
+
 
     @Override
     public void renderText(@NonNull Canvas canvas, @NonNull BaseKChartView view, float x, float y, int position, float[] values) {

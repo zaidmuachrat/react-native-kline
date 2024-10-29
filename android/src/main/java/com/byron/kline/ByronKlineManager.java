@@ -46,6 +46,7 @@ public class ByronKlineManager extends ViewGroupManager<ViewGroup> {
     private int _pricePrecision = 2;
     private int _volumePrecision = 2;
     private Boolean _requestStatus = false;
+    private Boolean isThrottled = false;
     private String _selectedInfoBoxTextColor;
     private String _selectedInfoBoxBorderColor;
     private String _selectedInfoBoxBackgroundColor;
@@ -660,10 +661,14 @@ public class ByronKlineManager extends ViewGroupManager<ViewGroup> {
                     public String format(float value) {
                         return String.format(Locale.CHINA, "%." + _volumePrecision + "f", value);
                     }
-                }
-        );
+                });
     }
-
+    
+    @ReactProp(name = "showMACD")
+    public void setShowMACD(ViewGroup view, boolean showMACD) {
+        _chartView.setIndexDraw(showMACD ? Status.IndexStatus.MACD : Status.IndexStatus.NONE);
+    }
+   
     @ReactProp(name = "increaseColor")
     public void setIncreaseColor(ViewGroup view, String increaseColor) {
         _chartView.setIncreaseColor(Color.parseColor(increaseColor));
@@ -755,11 +760,20 @@ public class ByronKlineManager extends ViewGroupManager<ViewGroup> {
         _chartView.setSlidListener(new SlidListener() {
             @Override
             public void onSlidLeft() {
-                if (_requestStatus) {
+                 if (_requestStatus || isThrottled) { // Check both flags
                     return;
                 }
                 _requestStatus = true;
+                isThrottled = true;
                 onReceiveNativeEvent();
+                 // Reset throttling and request status after rendering data
+                _mContainer.postDelayed(() -> {
+                    _requestStatus = false;
+                }, 100); // Delay for resetting the request status
+
+                _mContainer.postDelayed(() -> {
+                    isThrottled = false;
+                }, 2000);
             }
 
             @Override
