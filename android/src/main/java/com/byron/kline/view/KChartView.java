@@ -45,7 +45,8 @@ import java.util.Set;
 public class KChartView extends BaseKChartView {
 
     private View progressBar;
-
+   private float lastX = 0f;
+    private float lastY = 0f;
     public KChartView(Context context) {
         this(context, null);
         initView(context);
@@ -255,6 +256,28 @@ public class KChartView extends BaseKChartView {
         labelInPriceLinePaint.setColor(color);
         return this;
     }
+@Override
+public boolean onTouchEvent(MotionEvent event) {
+    switch (event.getAction()) {
+        case MotionEvent.ACTION_DOWN:
+            lastX = event.getX();
+            lastY = event.getY();
+            break;
+        case MotionEvent.ACTION_MOVE:
+            float dx = Math.abs(event.getX() - lastX);
+            float dy = Math.abs(event.getY() - lastY);
+
+            // If vertical movement is greater than horizontal, let the parent handle it.
+            if (dy > dx) {
+                getParent().requestDisallowInterceptTouchEvent(false);
+                return false;
+            } else {
+                getParent().requestDisallowInterceptTouchEvent(true);
+            }
+            break;
+    }
+    return super.onTouchEvent(event);
+}
 
     /**
      * 设置选中X坐标文字大小
