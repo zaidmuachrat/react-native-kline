@@ -167,7 +167,6 @@
         self.fromat = @"yyyy-MM";
     }
 }
-
 - (void)drawRect:(CGRect)rect {
     _displayHeight = rect.size.height - ChartStyle_topPadding - ChartStyle_bottomDateHigh;
     
@@ -184,14 +183,38 @@
         [self drawRightText:context];
         [self drawDate:context];
         [self drawMaxAndMin:context];
-        if(_isLongPress) {
-            [self drawLongPressCrossLine:context];
-        } else {
-            [self drawTopText:context curPoint:self.datas.firstObject];
-        }
+        
+        // Always draw the tooltip instead of only on long press
+        [self drawLongPressCrossLine:context];
+
         [self drawRealTimePrice:context];
     }
 }
+
+// - (void)drawRect:(CGRect)rect {
+//     _displayHeight = rect.size.height - ChartStyle_topPadding - ChartStyle_bottomDateHigh;
+    
+//     CGContextRef context = UIGraphicsGetCurrentContext();
+//     if(context != NULL) {
+//         [self divisionRect];
+//         [self calculateValue];
+//         [self calculateFormats];
+//         [self initRenderer];
+//         [self drawBgColor:context rect:rect];
+//         [self drawGrid:context];
+//         if(self.datas.count == 0) { return; }
+//         [self drawChart:context];
+//         [self drawRightText:context];
+//         [self drawDate:context];
+//         [self drawMaxAndMin:context];
+//         if(_isLongPress) {
+//             [self drawLongPressCrossLine:context];
+//         } else {
+//             [self drawTopText:context curPoint:self.datas.firstObject];
+//         }
+//         [self drawRealTimePrice:context];
+//     }
+// }
 
 -(void)divisionRect {
     CGFloat volHeight = (_volState != VolStateNONE) ? INDICATOR_HEIGHT : 0;
@@ -621,6 +644,7 @@
 }
 
 -(void)drawLongPressCrossLine:(CGContextRef)context {
+    if(_isLongPress){
     NSUInteger index = [self calculateIndexWithSelectX:self.longPressX];
     if ([self outRangeIndex:index]) { return; }
     KLineModel *point = self.datas[index];
@@ -650,100 +674,117 @@
 
     // Draw text for the cross line
     [self drawLongPressCrossLineText:context curPoint:point curX:curX y:y];
+    }else{
+         NSUInteger index = [self calculateIndexWithSelectX:self.longPressX];
+    if ([self outRangeIndex:index]) { return; }
+    KLineModel *point = self.datas[index];
+    CGFloat itemWidth = _candleWidth + ChartStyle_canldeMargin;
+    CGFloat curX ;
+
+ 
+
+    CGFloat y ;
+
+
+    // Draw text for the cross line
+    [self drawLongPressCrossLineText:context curPoint:point curX:curX y:y];
+    }
+    
 }
 -(void)drawLongPressCrossLineText:(CGContextRef)context curPoint:(KLineModel *)curPoint curX:(CGFloat)curX y:(CGFloat)y {
-    NSNumber *fixedPrice = [KLineStateManager manager].pricePrecision;
-    NSString *fixedPriceStr = [NSString stringWithFormat:@"%@%@f", @"%.", fixedPrice];
-    NSString *text = [NSString stringWithFormat:fixedPriceStr, curPoint.close];
-    CGRect rect = [text getRectWithFontSize:ChartStyle_defaultTextSize];
-    CGFloat padding = 3;
-    CGFloat textHeight = rect.size.height + padding * 2;
-    CGFloat textWidth = rect.size.width;
-    BOOL isLeft = false;
+    if (_isLongPress) {
+        // Price display
+        NSNumber *fixedPrice = [KLineStateManager manager].pricePrecision;
+        NSString *fixedPriceStr = [NSString stringWithFormat:@"%@%@f", @"%.", fixedPrice];
+        NSString *text = [NSString stringWithFormat:fixedPriceStr, curPoint.close];
+        CGRect rect = [text getRectWithFontSize:ChartStyle_defaultTextSize];
+        CGFloat padding = 3;
+        CGFloat textHeight = rect.size.height + padding * 2;
+        CGFloat textWidth = rect.size.width;
+        BOOL isLeft = false;
 
-    if (curX > self.frame.size.width / 2) {
-        isLeft = true;
-        CGContextMoveToPoint(context, self.frame.size.width, y - textHeight / 2);
-        CGContextAddLineToPoint(context, self.frame.size.width, y + textHeight / 2);
+        if (curX > self.frame.size.width / 2) {
+            isLeft = true;
+            CGContextMoveToPoint(context, self.frame.size.width, y - textHeight / 2);
+            CGContextAddLineToPoint(context, self.frame.size.width, y + textHeight / 2);
+            CGContextAddLineToPoint(context, self.frame.size.width - textWidth, y + textHeight / 2);
+            CGContextAddLineToPoint(context, self.frame.size.width - textWidth - 10, y);
+            CGContextAddLineToPoint(context, self.frame.size.width - textWidth, y - textHeight / 2);
+            CGContextAddLineToPoint(context, self.frame.size.width, y - textHeight / 2);
+            CGContextSetLineWidth(context, 1);
+            CGContextSetStrokeColorWithColor(context, ChartColors_markerBorderColor.CGColor);
+            CGContextSetFillColorWithColor(context, ChartColors_markerBgColor.CGColor);
+            CGContextDrawPath(context, kCGPathFillStroke);
+            [self.mainRenderer drawText:text atPoint:CGPointMake(self.frame.size.width - textWidth - 2, y - rect.size.height / 2) fontSize:ChartStyle_defaultTextSize textColor:[UIColor whiteColor]];
+        } else {
+            isLeft = false;
+            CGContextMoveToPoint(context, 0, y - textHeight / 2);
+            CGContextAddLineToPoint(context, 0, y + textHeight / 2);
+            CGContextAddLineToPoint(context, textWidth, y + textHeight / 2);
+            CGContextAddLineToPoint(context, textWidth + 10, y);
+            CGContextAddLineToPoint(context, textWidth, y - textHeight / 2);
+            CGContextAddLineToPoint(context, 0, y - textHeight / 2);
+            CGContextSetLineWidth(context, 1);
+            CGContextSetStrokeColorWithColor(context, ChartColors_markerBorderColor.CGColor);
+            CGContextSetFillColorWithColor(context, ChartColors_markerBgColor.CGColor);
+            CGContextDrawPath(context, kCGPathFillStroke);
+            [self.mainRenderer drawText:text atPoint:CGPointMake(2, y - rect.size.height / 2) fontSize:ChartStyle_defaultTextSize textColor:[UIColor whiteColor]];
+        }
 
-        CGContextAddLineToPoint(context, self.frame.size.width - textWidth, y + textHeight / 2);
-        CGContextAddLineToPoint(context, self.frame.size.width - textWidth - 10, y);
-        CGContextAddLineToPoint(context, self.frame.size.width - textWidth, y - textHeight / 2);
-        CGContextAddLineToPoint(context, self.frame.size.width, y - textHeight / 2);
+        // Time display
+        NSDate *date = [NSDate dateWithTimeIntervalSince1970:curPoint.id];
+        NSDateFormatter *timeFormatter = [[NSDateFormatter alloc] init];
+        if ([@[@"1D", @"5D",@"1Min",@"5M",@"10M",@"30M",@"1H"] containsObject:self.selectedDuration]) {
+            timeFormatter.dateFormat = @"HH:mm";
+        } else if([@[@"1M", @"3M"] containsObject:self.selectedDuration]) {
+            timeFormatter.dateFormat = @"MM-dd";
+        } else {
+            timeFormatter.dateFormat = @"yyyy-MM";
+        }
+
+        NSString *timeText = [timeFormatter stringFromDate:date];
+        CGRect timeRect = [timeText getRectWithFontSize:ChartStyle_defaultTextSize];
+        CGFloat datePadding = 3;
+
+        CGFloat timeBoxX = curX - timeRect.size.width / 2 - datePadding;
+        CGFloat timeBoxY = CGRectGetMinY(self.dateRect) - timeRect.size.height - datePadding * 2;
+
+        if (timeBoxY < 0) {
+            timeBoxY = 0;
+        }
+
         CGContextSetLineWidth(context, 1);
-        CGContextSetStrokeColorWithColor(context, ChartColors_markerBorderColor.CGColor);
-        CGContextSetFillColorWithColor(context, ChartColors_markerBgColor.CGColor);
+        CGContextSetFillColorWithColor(context, [UIColor blackColor].CGColor);
+        CGContextSetStrokeColorWithColor(context, [UIColor whiteColor].CGColor);
+
+        CGContextMoveToPoint(context, timeBoxX, timeBoxY);
+
+        CGRect timeArcRect = CGRectMake(timeBoxX, timeBoxY, timeRect.size.width + datePadding * 2, timeRect.size.height + datePadding * 2);
+        CGFloat minX = CGRectGetMinX(timeArcRect);
+        CGFloat midX = CGRectGetMidX(timeArcRect);
+        CGFloat maxX = CGRectGetMaxX(timeArcRect);
+        CGFloat minY = CGRectGetMinY(timeArcRect);
+        CGFloat midY = CGRectGetMidY(timeArcRect);
+        CGFloat maxY = CGRectGetMaxY(timeArcRect);
+
+        CGContextMoveToPoint(context, minX, midY);
+        CGContextAddArcToPoint(context, minX, minY, midX, minY, 5);
+        CGContextAddArcToPoint(context, maxX, minY, maxX, midY, 5);
+        CGContextAddArcToPoint(context, maxX, maxY, midX, maxY, 5);
+        CGContextAddArcToPoint(context, minX, maxY, minX, midY, 5);
+        CGContextClosePath(context);
         CGContextDrawPath(context, kCGPathFillStroke);
-        [self.mainRenderer drawText:text atPoint:CGPointMake(self.frame.size.width - textWidth - 2, y - rect.size.height / 2) fontSize:ChartStyle_defaultTextSize textColor: [UIColor whiteColor]];
-    } else {
-        isLeft = false;
-        CGContextMoveToPoint(context, 0, y - textHeight / 2);
-        CGContextAddLineToPoint(context, 0, y + textHeight / 2);
 
-        CGContextAddLineToPoint(context, textWidth, y + textHeight / 2);
-        CGContextAddLineToPoint(context, textWidth + 10, y);
-        CGContextAddLineToPoint(context, textWidth, y - textHeight / 2);
-        CGContextAddLineToPoint(context, 0, y - textHeight / 2);
-        CGContextSetLineWidth(context, 1);
-        CGContextSetStrokeColorWithColor(context, ChartColors_markerBorderColor.CGColor);
-        CGContextSetFillColorWithColor(context, ChartColors_markerBgColor.CGColor);
-        CGContextDrawPath(context, kCGPathFillStroke);
-        [self.mainRenderer drawText:text atPoint:CGPointMake(2, y - rect.size.height / 2) fontSize:ChartStyle_defaultTextSize textColor: [UIColor whiteColor]];
+        [self.mainRenderer drawText:timeText atPoint:CGPointMake(timeBoxX + datePadding, timeBoxY + datePadding) fontSize:ChartStyle_defaultTextSize textColor:[UIColor whiteColor]];
+
+        // Display additional info only on long press
+        self.showInfoBlock(curPoint, isLeft);
     }
-
-    // Get the time text for the x-axis
-    NSDate *date = [NSDate dateWithTimeIntervalSince1970:curPoint.id];
-    NSDateFormatter *timeFormatter = [[NSDateFormatter alloc] init];
-
-    if ([@[@"1D", @"5D",@"1Min",@"5M",@"10M",@"30M",@"1H"] containsObject:self.selectedDuration]) {
-        timeFormatter.dateFormat = @"HH:mm";
-    } else if([@[@"1M", @"3M"] containsObject:self.selectedDuration]) {
-        timeFormatter.dateFormat = @"MM-dd";
-    } else {
-        timeFormatter.dateFormat = @"yyyy-MM";
-    }
-
-    NSString *timeText = [timeFormatter stringFromDate:date];
-    CGRect timeRect = [timeText getRectWithFontSize:ChartStyle_defaultTextSize];
-    CGFloat datePadding = 3;
-
-    // Draw the black box with time on the x-axis
-    CGFloat timeBoxX = curX - timeRect.size.width / 2 - datePadding;
-    CGFloat timeBoxY = CGRectGetMinY(self.dateRect) - timeRect.size.height - datePadding * 2;
-
-    // Ensure the time box is above the x-axis
-    if (timeBoxY < 0) {
-        timeBoxY = 0;
-    }
-
-    CGContextSetLineWidth(context, 1);
-    CGContextSetFillColorWithColor(context, [UIColor blackColor].CGColor);
-    CGContextSetStrokeColorWithColor(context, [UIColor whiteColor].CGColor);
-
-    CGContextMoveToPoint(context, timeBoxX, timeBoxY);
-
-    CGRect timeArcRect = CGRectMake(timeBoxX, timeBoxY, timeRect.size.width + datePadding * 2, timeRect.size.height + datePadding * 2);
-    CGFloat minX = CGRectGetMinX(timeArcRect);
-    CGFloat midX = CGRectGetMidX(timeArcRect);
-    CGFloat maxX = CGRectGetMaxX(timeArcRect);
-
-    CGFloat minY = CGRectGetMinY(timeArcRect);
-    CGFloat midY = CGRectGetMidY(timeArcRect);
-    CGFloat maxY = CGRectGetMaxY(timeArcRect);
-
-    CGContextMoveToPoint(context, minX, midY);
-    CGContextAddArcToPoint(context, minX, minY, midX, minY, 5);
-    CGContextAddArcToPoint(context, maxX, minY, maxX, midY, 5);
-    CGContextAddArcToPoint(context, maxX, maxY, midX, maxY, 5);
-    CGContextAddArcToPoint(context, minX, maxY, minX, midY, 5);
-    CGContextClosePath(context);
-    CGContextDrawPath(context, kCGPathFillStroke);
-
-    [self.mainRenderer drawText:timeText atPoint:CGPointMake(timeBoxX + datePadding, timeBoxY + datePadding) fontSize:ChartStyle_defaultTextSize textColor:[UIColor whiteColor]];
-
-    self.showInfoBlock(curPoint, isLeft);
+    
+    // Always show the top text values
     [self drawTopText:context curPoint:curPoint];
 }
+
 
 -(void)drawTopText:(CGContextRef)context curPoint:(KLineModel *)curPoint {
     [_mainRenderer drawTopText:context curPoint:curPoint];
