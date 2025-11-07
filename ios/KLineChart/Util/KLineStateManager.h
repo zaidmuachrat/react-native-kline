@@ -24,8 +24,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property(nonatomic,strong) NSArray *datas;
 
-@property(nonatomic,assign) NSNumber *pricePrecision;
-@property(nonatomic,assign) NSNumber *volumePrecision;
+@property(nonatomic,strong) NSNumber *pricePrecision;
+@property(nonatomic,strong) NSNumber *volumePrecision;
 
 @property(nonatomic,strong) NSArray *locales;
 

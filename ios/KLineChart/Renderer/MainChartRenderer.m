@@ -187,6 +187,10 @@
 
 - (void)drawTopText:(CGContextRef)context curPoint:(KLineModel *)curPoint {
     NSNumber *fixed = [KLineStateManager manager].pricePrecision;
+    if (fixed == nil) {
+        fixed = @(2);
+        [KLineStateManager manager].pricePrecision = fixed;
+    }
     NSMutableAttributedString *topAttributeText = [[NSMutableAttributedString alloc] init];
     
     // Draw MA text
@@ -196,21 +200,21 @@
         [topAttributeText appendAttributedString:staticAttr];
         
         if (curPoint.MA5Price != 0) {
-            NSString *fixedStr = [NSString stringWithFormat:@"%@%@f", @"MA5:%.", fixed];
+            NSString *fixedStr = [NSString stringWithFormat:@"%@%ldf", @"MA5:%.", (long)fixed.integerValue];
             NSString *str = [NSString stringWithFormat:fixedStr, curPoint.MA5Price];
             NSAttributedString *attr = [[NSAttributedString alloc] initWithString:[str stringByAppendingString:@"    "] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:ChartStyle_defaultTextSize], NSForegroundColorAttributeName: ChartColors_ma5Color}];
             [topAttributeText appendAttributedString:attr];
         }
         
         if (curPoint.MA10Price != 0) {
-            NSString *fixedStr = [NSString stringWithFormat:@"%@%@f", @"MA10:%.", fixed];
+            NSString *fixedStr = [NSString stringWithFormat:@"%@%ldf", @"MA10:%.", (long)fixed.integerValue];
             NSString *str = [NSString stringWithFormat:fixedStr, curPoint.MA10Price];
             NSAttributedString *attr = [[NSAttributedString alloc] initWithString:[str stringByAppendingString:@"    "] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:ChartStyle_defaultTextSize], NSForegroundColorAttributeName: ChartColors_ma10Color}];
             [topAttributeText appendAttributedString:attr];
         }
         
         if (curPoint.MA30Price != 0) {
-            NSString *fixedStr = [NSString stringWithFormat:@"%@%@f", @"MA30:%.", fixed];
+            NSString *fixedStr = [NSString stringWithFormat:@"%@%ldf", @"MA30:%.", (long)fixed.integerValue];
             NSString *str = [NSString stringWithFormat:fixedStr, curPoint.MA30Price];
             NSAttributedString *attr = [[NSAttributedString alloc] initWithString:[str stringByAppendingString:@"    "] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:ChartStyle_defaultTextSize], NSForegroundColorAttributeName: ChartColors_ma30Color}];
             [topAttributeText appendAttributedString:attr];
@@ -228,21 +232,21 @@
         [topAttributeText appendAttributedString:staticAttr];
         
         if (curPoint.up != 0) {
-            NSString *fixedStr = [NSString stringWithFormat:@"%@%@f", @"UPPER:%.", fixed];
+            NSString *fixedStr = [NSString stringWithFormat:@"%@%ldf", @"UPPER:%.", (long)fixed.integerValue];
             NSString *str = [NSString stringWithFormat:fixedStr, curPoint.up];
             NSAttributedString *attr = [[NSAttributedString alloc] initWithString:[str stringByAppendingString:@"    "] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:ChartStyle_defaultTextSize], NSForegroundColorAttributeName: ChartColors_ma5Color}];
             [topAttributeText appendAttributedString:attr];
         }
         
         if (curPoint.mb != 0) {
-            NSString *fixedStr = [NSString stringWithFormat:@"%@%@f", @"MID:%.", fixed];
+            NSString *fixedStr = [NSString stringWithFormat:@"%@%ldf", @"MID:%.", (long)fixed.integerValue];
             NSString *str = [NSString stringWithFormat:fixedStr, curPoint.mb];
             NSAttributedString *attr = [[NSAttributedString alloc] initWithString:[str stringByAppendingString:@"    "] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:ChartStyle_defaultTextSize], NSForegroundColorAttributeName: ChartColors_ma10Color}];
             [topAttributeText appendAttributedString:attr];
         }
         
         if (curPoint.dn != 0) {
-            NSString *fixedStr = [NSString stringWithFormat:@"%@%@f", @"LOWER:%.", fixed];
+            NSString *fixedStr = [NSString stringWithFormat:@"%@%ldf", @"LOWER:%.", (long)fixed.integerValue];
             NSString *str = [NSString stringWithFormat:fixedStr, curPoint.dn];
             NSAttributedString *attr = [[NSAttributedString alloc] initWithString:[str stringByAppendingString:@"    "] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:ChartStyle_defaultTextSize], NSForegroundColorAttributeName: ChartColors_ma30Color}];
             [topAttributeText appendAttributedString:attr];
@@ -255,7 +259,11 @@
 - (void)drawRightText:(CGContextRef)context gridRows:(NSUInteger)gridRows gridColums:(NSUInteger)gridColums {
     CGFloat rowSpace = self.chartRect.size.height / (CGFloat)gridRows;
     NSNumber *fixed = [KLineStateManager manager].pricePrecision;
-    NSString *fixedStr = [NSString stringWithFormat:@"%@%@f", @"%.", fixed];
+    if (fixed == nil) {
+        fixed = @(2);
+        [KLineStateManager manager].pricePrecision = fixed;
+    }
+    NSString *fixedStr = [NSString stringWithFormat:@"%@%ldf", @"%.", (long)fixed.integerValue];
     for (int i = 0; i <= gridRows; i++) {
         CGFloat position = 0;
         position = (CGFloat)(gridRows - i) * rowSpace;

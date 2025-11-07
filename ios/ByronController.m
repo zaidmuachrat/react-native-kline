@@ -190,7 +190,7 @@
 
 - (void)setPricePrecision:(NSNumber *)pricePrecision {
     if (pricePrecision == nil) {
-        return;
+        pricePrecision = @(2);
     }
     _pricePrecision = pricePrecision;
     if (_chartView == nil) {
@@ -201,7 +201,7 @@
 
 - (void)setVolumePrecision:(NSNumber *)volumePrecision {
     if (volumePrecision == nil) {
-        return;
+        volumePrecision = @(2);
     }
     _volumePrecision = volumePrecision;
     if (_chartView == nil) {

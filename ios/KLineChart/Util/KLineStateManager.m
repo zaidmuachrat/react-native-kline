@@ -19,6 +19,8 @@ static KLineStateManager *_manager = nil;
         _mainState = MainStateMA;
         _secondaryState = SecondaryStateMacd;
         _isLine = false;
+        _pricePrecision = @(2);
+        _volumePrecision = @(2);
     }
     return self;
 }
@@ -56,6 +58,20 @@ static KLineStateManager *_manager = nil;
 -(void)setIsLine:(BOOL)isLine {
     _isLine = isLine;
     _klineChart.isLine = isLine;
+}
+
+- (void)setPricePrecision:(NSNumber *)pricePrecision {
+    if (pricePrecision == nil) {
+        pricePrecision = @(2);
+    }
+    _pricePrecision = pricePrecision;
+}
+
+- (void)setVolumePrecision:(NSNumber *)volumePrecision {
+    if (volumePrecision == nil) {
+        volumePrecision = @(2);
+    }
+    _volumePrecision = volumePrecision;
 }
 
 @end

@@ -108,6 +108,10 @@
 - (void)drawTopText:(CGContextRef)context curPoint:(KLineModel *)curPoint {
     NSMutableAttributedString *topAttributeText = [[NSMutableAttributedString alloc] init];
     NSNumber *fixed = [KLineStateManager manager].pricePrecision;
+    if (fixed == nil) {
+        fixed = @(2);
+        [KLineStateManager manager].pricePrecision = fixed;
+    }
     switch (_state) {
         case SecondaryStateMacd:
         {
@@ -117,19 +121,19 @@
                  [topAttributeText appendAttributedString:attr];
              }
             if(curPoint.macd != 0) {
-                 NSString *fixedStr = [NSString stringWithFormat:@"%@%@f", @"MACD:%.", fixed];
+                 NSString *fixedStr = [NSString stringWithFormat:@"%@%ldf", @"MACD:%.", (long)fixed.integerValue];
                  NSString *str = [NSString stringWithFormat:fixedStr, curPoint.macd];
                  NSAttributedString *attr = [[NSAttributedString alloc] initWithString:[str stringByAppendingString:@"    "] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:ChartStyle_defaultTextSize],NSForegroundColorAttributeName: ChartColors_macdColor}];
                  [topAttributeText appendAttributedString:attr];
              }
             if(curPoint.dif != 0) {
-                 NSString *fixedStr = [NSString stringWithFormat:@"%@%@f", @"DIF:%.", fixed];
+                 NSString *fixedStr = [NSString stringWithFormat:@"%@%ldf", @"DIF:%.", (long)fixed.integerValue];
                  NSString *str = [NSString stringWithFormat:fixedStr, curPoint.dif];
                  NSAttributedString *attr = [[NSAttributedString alloc] initWithString:[str stringByAppendingString:@"    "] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:ChartStyle_defaultTextSize],NSForegroundColorAttributeName: ChartColors_difColor}];
                  [topAttributeText appendAttributedString:attr];
              }
             if(curPoint.dea != 0) {
-                 NSString *fixedStr = [NSString stringWithFormat:@"%@%@f", @"DEA:%.", fixed];
+                 NSString *fixedStr = [NSString stringWithFormat:@"%@%ldf", @"DEA:%.", (long)fixed.integerValue];
                  NSString *str = [NSString stringWithFormat:fixedStr, curPoint.dea];
                  NSAttributedString *attr = [[NSAttributedString alloc] initWithString:[str stringByAppendingString:@"    "] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:ChartStyle_defaultTextSize],NSForegroundColorAttributeName: ChartColors_deaColor}];
                  [topAttributeText appendAttributedString:attr];
@@ -142,7 +146,7 @@
     NSAttributedString *rsiLabelAttr = [[NSAttributedString alloc] initWithString:rsiLabel attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:ChartStyle_defaultTextSize], NSForegroundColorAttributeName: ChartColors_yAxisTextColor}];
 
     // Create the value part with the default RSI color
-    NSString *fixedStr = [NSString stringWithFormat:@"%@%@f", @"%.", fixed];
+    NSString *fixedStr = [NSString stringWithFormat:@"%@%ldf", @"%.", (long)fixed.integerValue];
     NSString *str = [NSString stringWithFormat:fixedStr, curPoint.rsi];
     NSAttributedString *valueAttr = [[NSAttributedString alloc] initWithString:[str stringByAppendingString:@"    "] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:ChartStyle_defaultTextSize], NSForegroundColorAttributeName: ChartColors_rsiColor}];
 
@@ -161,7 +165,7 @@
             [topAttributeText appendAttributedString:wrLabelAttr];
 
             if (curPoint.r != CGFLOAT_MAX) {
-                NSString *fixedStr = [NSString stringWithFormat:@"%@%@f", @"%.", fixed];
+                NSString *fixedStr = [NSString stringWithFormat:@"%@%ldf", @"%.", (long)fixed.integerValue];
                 NSString *str = [NSString stringWithFormat:fixedStr, curPoint.r];
                 if ([str isEqualToString:@"-0.00"]) {
                     str = @"0.00";
@@ -178,19 +182,19 @@
                  [topAttributeText appendAttributedString:attr];
              }
             if(curPoint.k != 0) {
-                 NSString *fixedStr = [NSString stringWithFormat:@"%@%@f", @"K:%.", fixed];
+                 NSString *fixedStr = [NSString stringWithFormat:@"%@%ldf", @"K:%.", (long)fixed.integerValue];
                  NSString *str = [NSString stringWithFormat:fixedStr, curPoint.k];
                  NSAttributedString *attr = [[NSAttributedString alloc] initWithString:[str stringByAppendingString:@"    "] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:ChartStyle_defaultTextSize],NSForegroundColorAttributeName: ChartColors_kColor}];
                  [topAttributeText appendAttributedString:attr];
              }
             if(curPoint.d != 0) {
-                 NSString *fixedStr = [NSString stringWithFormat:@"%@%@f", @"D:%.", fixed];
+                 NSString *fixedStr = [NSString stringWithFormat:@"%@%ldf", @"D:%.", (long)fixed.integerValue];
                  NSString *str = [NSString stringWithFormat:fixedStr, curPoint.d];
                  NSAttributedString *attr = [[NSAttributedString alloc] initWithString:[str stringByAppendingString:@"    "] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:ChartStyle_defaultTextSize],NSForegroundColorAttributeName: ChartColors_dColor}];
                  [topAttributeText appendAttributedString:attr];
              }
             if(curPoint.j != 0) {
-                 NSString *fixedStr = [NSString stringWithFormat:@"%@%@f", @"J:%.", fixed];
+                 NSString *fixedStr = [NSString stringWithFormat:@"%@%ldf", @"J:%.", (long)fixed.integerValue];
                  NSString *str = [NSString stringWithFormat:fixedStr, curPoint.j];
                  NSAttributedString *attr = [[NSAttributedString alloc] initWithString:[str stringByAppendingString:@"    "] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:ChartStyle_defaultTextSize],NSForegroundColorAttributeName: ChartColors_jColor}];
                  [topAttributeText appendAttributedString:attr];

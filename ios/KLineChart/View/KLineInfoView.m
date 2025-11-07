@@ -62,9 +62,17 @@
     _model = model;
 //    _timeLable.text =
     NSNumber *fixedPrice = [KLineStateManager manager].pricePrecision;
+    if (fixedPrice == nil) {
+        fixedPrice = @(2);
+        [KLineStateManager manager].pricePrecision = fixedPrice;
+    }
     NSNumber *fixedVolume = [KLineStateManager manager].volumePrecision;
-    NSString *fixedPriceStr = [NSString stringWithFormat:@"%@%@f", @"%.", fixedPrice];
-    NSString *fixedVolumeStr = [NSString stringWithFormat:@"%@%@f", @"%.", fixedVolume];
+    if (fixedVolume == nil) {
+        fixedVolume = @(2);
+        [KLineStateManager manager].volumePrecision = fixedVolume;
+    }
+    NSString *fixedPriceStr = [NSString stringWithFormat:@"%@%ldf", @"%.", (long)fixedPrice.integerValue];
+    NSString *fixedVolumeStr = [NSString stringWithFormat:@"%@%ldf", @"%.", (long)fixedVolume.integerValue];
     NSDate *date = [NSDate dateWithTimeIntervalSince1970:model.id];
     NSDateFormatter *formater = [[NSDateFormatter alloc] init];
     formater.dateFormat = @"yyyy-MM-dd HH:mm";

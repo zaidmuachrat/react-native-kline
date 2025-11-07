@@ -96,7 +96,11 @@
 
 -(NSString *)volFormat:(CGFloat)value {
     NSNumber *fixed = [KLineStateManager manager].volumePrecision;
-    NSString *fixedStr = [NSString stringWithFormat:@"%@%@f", @"%.", fixed];
+    if (fixed == nil) {
+        fixed = @(2);
+        [KLineStateManager manager].volumePrecision = fixed;
+    }
+    NSString *fixedStr = [NSString stringWithFormat:@"%@%ldf", @"%.", (long)fixed.integerValue];
     if (value > 10000 && value < 999999) {
          CGFloat d = value / 1000;
          NSString *k = [NSString stringWithFormat:fixedStr,d];

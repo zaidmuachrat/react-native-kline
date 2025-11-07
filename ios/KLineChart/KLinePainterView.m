@@ -614,8 +614,12 @@
 -(void)drawMaxAndMin:(CGContextRef)context {
     if(_isLine) { return; }
     NSNumber *fixedPrice = [KLineStateManager manager].pricePrecision;
-    NSString *maxFixedPrice = [NSString stringWithFormat:@"%@%@f", @"——%.", fixedPrice];
-    NSString *minFixedPrice = [NSString stringWithFormat:@"%@%@f", @"%.", fixedPrice];
+    if (fixedPrice == nil) {
+        fixedPrice = @(2);
+        [KLineStateManager manager].pricePrecision = fixedPrice;
+    }
+    NSString *maxFixedPrice = [NSString stringWithFormat:@"%@%ldf", @"——%.", (long)fixedPrice.integerValue];
+    NSString *minFixedPrice = [NSString stringWithFormat:@"%@%ldf", @"%.", (long)fixedPrice.integerValue];
     [minFixedPrice stringByAppendingString:@"——"];
     CGFloat itemWidth = self.candleWidth + ChartStyle_canldeMargin;
     CGFloat y1 = [self.mainRenderer getY:_mMainHighMaxValue];
@@ -695,7 +699,11 @@
     if (_isLongPress) {
         // Price display
         NSNumber *fixedPrice = [KLineStateManager manager].pricePrecision;
-        NSString *fixedPriceStr = [NSString stringWithFormat:@"%@%@f", @"%.", fixedPrice];
+        if (fixedPrice == nil) {
+            fixedPrice = @(2);
+            [KLineStateManager manager].pricePrecision = fixedPrice;
+        }
+        NSString *fixedPriceStr = [NSString stringWithFormat:@"%@%ldf", @"%.", (long)fixedPrice.integerValue];
         NSString *text = [NSString stringWithFormat:fixedPriceStr, curPoint.close];
         CGRect rect = [text getRectWithFontSize:ChartStyle_defaultTextSize];
         CGFloat padding = 3;
@@ -841,7 +849,11 @@
 -(void)drawRealTimePrice:(CGContextRef)context {
     KLineModel *point = self.datas.firstObject;
     NSNumber *fixedPrice = [KLineStateManager manager].pricePrecision;
-    NSString *fixedPriceStr = [NSString stringWithFormat:@"%@%@f", @"%.", fixedPrice];
+    if (fixedPrice == nil) {
+        fixedPrice = @(2);
+        [KLineStateManager manager].pricePrecision = fixedPrice;
+    }
+    NSString *fixedPriceStr = [NSString stringWithFormat:@"%@%ldf", @"%.", (long)fixedPrice.integerValue];
     NSString *text = [NSString stringWithFormat:fixedPriceStr,point.close];
     CGFloat fontSize = 10;
     CGRect rect = [text getRectWithFontSize:fontSize];
